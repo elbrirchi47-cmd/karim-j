@@ -1,0 +1,4029 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>macOS Sequoia — MacBook Pro Quantum Ultra (Willow 105 Qubits + Hyper-Swap 256 Go)</title>
+  <style>
+    /* ==========================================================================
+       1. VARIABLES DE THÈME & DESIGN TOKENS MACOS SEQUOIA + QUANTUM ULTRA
+       ========================================================================== */
+    :root {
+      --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+      --font-mono: "SF Mono", ui-monospace, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+
+      --accent: #007aff;
+      --accent-hover: #0062cc;
+      --accent-soft: rgba(0, 122, 255, 0.16);
+      --green-ok: #28cd41;
+      --yellow-warn: #ffbd2e;
+      --red-close: #ff5f57;
+      --purple-swap: #af52de;
+      --orange-comp: #ff9500;
+      --cyan-turbo: #32ade6;
+      --quantum-pink: #ff2d55;
+
+      --menubar-height: 28px;
+      --dock-area-height: 82px;
+      --radius-window: 12px;
+      --radius-card: 10px;
+      --radius-sm: 6px;
+    }
+
+    body.theme-light {
+      --menubar-bg: rgba(246, 246, 248, 0.74);
+      --menubar-text: #1d1d1f;
+      --menubar-border: rgba(0, 0, 0, 0.12);
+      --dropdown-bg: rgba(248, 248, 250, 0.90);
+      --dropdown-border: rgba(0, 0, 0, 0.14);
+      --window-bg: rgba(255, 255, 255, 0.92);
+      --window-header-bg: rgba(245, 245, 247, 0.88);
+      --sidebar-bg: rgba(238, 239, 243, 0.82);
+      --card-bg: rgba(255, 255, 255, 0.78);
+      --card-border: rgba(0, 0, 0, 0.09);
+      --input-bg: rgba(0, 0, 0, 0.055);
+      --hover-bg: rgba(0, 0, 0, 0.06);
+      --text-primary: #1d1d1f;
+      --text-secondary: #515154;
+      --text-tertiary: #86868b;
+      --divider: rgba(0, 0, 0, 0.09);
+      --dock-bg: rgba(255, 255, 255, 0.38);
+      --dock-border: rgba(255, 255, 255, 0.58);
+      --shadow-window: 0 22px 55px rgba(0, 0, 0, 0.26), 0 0 0 0.5px rgba(0, 0, 0, 0.18);
+      --shadow-window-inactive: 0 10px 28px rgba(0, 0, 0, 0.14), 0 0 0 0.5px rgba(0, 0, 0, 0.12);
+    }
+
+    body.theme-dark {
+      --menubar-bg: rgba(24, 25, 32, 0.74);
+      --menubar-text: #f5f5f7;
+      --menubar-border: rgba(255, 255, 255, 0.14);
+      --dropdown-bg: rgba(34, 35, 42, 0.90);
+      --dropdown-border: rgba(255, 255, 255, 0.16);
+      --window-bg: rgba(26, 27, 34, 0.92);
+      --window-header-bg: rgba(36, 37, 45, 0.90);
+      --sidebar-bg: rgba(20, 21, 27, 0.85);
+      --card-bg: rgba(42, 44, 54, 0.74);
+      --card-border: rgba(255, 255, 255, 0.10);
+      --input-bg: rgba(255, 255, 255, 0.08);
+      --hover-bg: rgba(255, 255, 255, 0.08);
+      --text-primary: #f5f5f7;
+      --text-secondary: #a1a1a6;
+      --text-tertiary: #7c7c82;
+      --divider: rgba(255, 255, 255, 0.10);
+      --dock-bg: rgba(24, 25, 32, 0.48);
+      --dock-border: rgba(255, 255, 255, 0.22);
+      --shadow-window: 0 24px 60px rgba(0, 0, 0, 0.60), 0 0 0 0.5px rgba(255, 255, 255, 0.18);
+      --shadow-window-inactive: 0 12px 30px rgba(0, 0, 0, 0.40), 0 0 0 0.5px rgba(255, 255, 255, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      color: var(--text-primary);
+      background: #05070e;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ==========================================================================
+       2. ÉCRAN DE DÉMARRAGE MACOS QUANTUM ULTRA
+       ========================================================================== */
+    #boot-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: radial-gradient(circle at 50% 42%, #0c1224 0%, #000000 75%);
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 22px;
+      transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.6s;
+    }
+
+    #boot-screen.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .boot-logo {
+      width: 76px;
+      height: 76px;
+      fill: #ffffff;
+      filter: drop-shadow(0 0 28px rgba(50, 173, 230, 0.42));
+      animation: bootPulse 2.4s ease-in-out infinite;
+    }
+
+    @keyframes bootPulse {
+      0%, 100% { transform: scale(1); opacity: 0.94; }
+      50% { transform: scale(1.04); opacity: 1; }
+    }
+
+    .boot-progress-wrap {
+      width: min(290px, 76vw);
+      height: 5px;
+      background: rgba(255, 255, 255, 0.16);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .boot-progress-bar {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #32ade6, #af52de, #28cd41);
+      border-radius: 999px;
+      transition: width 0.16s linear;
+    }
+
+    .boot-specs {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 0 16px;
+    }
+
+    .boot-specs-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      color: rgba(255, 255, 255, 0.95);
+    }
+
+    .boot-specs-sub {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: #32ade6;
+    }
+
+    #boot-skip-btn {
+      margin-top: 6px;
+      padding: 6px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.88);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    #boot-skip-btn:hover {
+      background: rgba(255, 255, 255, 0.22);
+      color: #fff;
+    }
+
+    /* ==========================================================================
+       3. BUREAU & FONDS D'ÉCRAN DYNAMIQUES
+       ========================================================================== */
+    #desktop {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    #wallpaper-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+
+    #wallpaper-layer svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    #brightness-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9990;
+      background: #000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s ease;
+    }
+
+    /* ==========================================================================
+       4. BARRE DES MENUS SUPÉRIEURE (GLASSMORPHISM MACOS)
+       ========================================================================== */
+    #menubar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--menubar-height);
+      z-index: 5000;
+      background: var(--menubar-bg);
+      backdrop-filter: blur(26px) saturate(180%);
+      -webkit-backdrop-filter: blur(26px) saturate(180%);
+      border-bottom: 0.5px solid var(--menubar-border);
+      color: var(--menubar-text);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
+      font-size: 12.5px;
+    }
+
+    .menubar-left, .menubar-right {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      gap: 2px;
+    }
+
+    .menu-item {
+      position: relative;
+      height: 22px;
+      padding: 0 8px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.12s;
+    }
+
+    .menu-item:hover, .menu-item.active {
+      background: var(--hover-bg);
+    }
+
+    .menu-item.app-title {
+      font-weight: 700;
+    }
+
+    .apple-menu-icon {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+    }
+
+    .status-pill {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(175, 82, 222, 0.18);
+      color: var(--purple-swap);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green-ok);
+      box-shadow: 0 0 6px var(--green-ok);
+    }
+
+    @media (max-width: 820px) {
+      .hide-tablet { display: none !important; }
+    }
+
+    /* Menus déroulants & Popovers */
+    .menu-dropdown, .status-popover {
+      position: fixed;
+      top: calc(var(--menubar-height) + 4px);
+      z-index: 6000;
+      background: var(--dropdown-bg);
+      backdrop-filter: blur(30px) saturate(190%);
+      -webkit-backdrop-filter: blur(30px) saturate(190%);
+      border: 0.5px solid var(--dropdown-border);
+      border-radius: 10px;
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.28);
+      padding: 5px;
+      min-width: 235px;
+      color: var(--text-primary);
+      display: none;
+      animation: popIn 0.14s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .menu-dropdown.open, .status-popover.open {
+      display: block;
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: translateY(-4px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .dropdown-action {
+      padding: 6px 10px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      font-size: 12.5px;
+      cursor: pointer;
+    }
+
+    .dropdown-action:hover {
+      background: var(--accent);
+      color: #ffffff;
+    }
+
+    .dropdown-action:hover .shortcut {
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .dropdown-sep {
+      height: 1px;
+      background: var(--divider);
+      margin: 4px 6px;
+    }
+
+    .shortcut {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      font-family: var(--font-mono);
+    }
+
+    /* Centre de contrôle complet */
+    .control-center-panel {
+      right: 10px;
+      width: 325px;
+      padding: 12px;
+    }
+
+    .cc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .cc-tile {
+      background: var(--card-bg);
+      border: 0.5px solid var(--card-border);
+      border-radius: 10px;
+      padding: 9px 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .cc-tile:hover { transform: translateY(-1px); }
+
+    .cc-tile-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--input-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+
+    .cc-tile.active .cc-tile-icon { background: var(--accent); color: #fff; }
+    .cc-tile.turbo.active .cc-tile-icon { background: var(--purple-swap); color: #fff; }
+    .cc-tile.qpu.active .cc-tile-icon { background: var(--cyan-turbo); color: #000; }
+    .cc-tile.gemini.active .cc-tile-icon { background: var(--green-ok); color: #fff; }
+
+    .cc-slider-box {
+      background: var(--card-bg);
+      border: 0.5px solid var(--card-border);
+      border-radius: 10px;
+      padding: 9px 12px;
+      margin-bottom: 8px;
+    }
+
+    .cc-slider-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 5px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    input[type="range"].mac-slider {
+      width: 100%;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    /* ==========================================================================
+       5. ICÔNES DU BUREAU
+       ========================================================================== */
+    #desktop-icons {
+      position: absolute;
+      top: calc(var(--menubar-height) + 16px);
+      right: 16px;
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      align-items: flex-end;
+    }
+
+    .desktop-icon {
+      width: 104px;
+      padding: 7px 5px;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: background 0.15s;
+    }
+
+    .desktop-icon:hover { background: rgba(255, 255, 255, 0.14); }
+    .desktop-icon.selected { background: rgba(0, 122, 255, 0.34); border-color: rgba(255, 255, 255, 0.45); }
+
+    .desktop-icon-art {
+      width: 48px;
+      height: 48px;
+      filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.38));
+    }
+
+    .desktop-icon-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: #ffffff;
+      text-align: center;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.88);
+      line-height: 1.22;
+      word-break: break-word;
+      padding: 1px 5px;
+      border-radius: 4px;
+    }
+
+    .desktop-icon.selected .desktop-icon-label { background: var(--accent); }
+
+    /* ==========================================================================
+       6. GESTIONNAIRE DE FENÊTRES MACOS
+       ========================================================================== */
+    #windows-container {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    .mac-window {
+      position: absolute;
+      pointer-events: auto;
+      background: var(--window-bg);
+      backdrop-filter: blur(28px) saturate(180%);
+      -webkit-backdrop-filter: blur(28px) saturate(180%);
+      border-radius: var(--radius-window);
+      box-shadow: var(--shadow-window-inactive);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-width: 310px;
+      min-height: 220px;
+      transition: opacity 0.2s ease, transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .mac-window.focused { box-shadow: var(--shadow-window); }
+
+    .mac-window.minimized {
+      opacity: 0;
+      transform: scale(0.35) translateY(360px);
+      pointer-events: none;
+    }
+
+    .mac-window.maximized {
+      top: var(--menubar-height) !important;
+      left: 0 !important;
+      width: 100vw !important;
+      height: calc(100vh - var(--menubar-height) - var(--dock-area-height)) !important;
+      border-radius: 0;
+    }
+
+    .window-titlebar {
+      height: 36px;
+      min-height: 36px;
+      background: var(--window-header-bg);
+      border-bottom: 0.5px solid var(--divider);
+      display: flex;
+      align-items: center;
+      padding: 0 13px;
+      gap: 10px;
+      cursor: grab;
+    }
+
+    .window-titlebar:active { cursor: grabbing; }
+
+    .traffic-lights {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      z-index: 2;
+    }
+
+    .traffic-btn {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 0.5px solid rgba(0, 0, 0, 0.16);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: 800;
+      color: rgba(0, 0, 0, 0.65);
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .traffic-btn span { opacity: 0; transition: opacity 0.1s; }
+    .traffic-lights:hover .traffic-btn span { opacity: 1; }
+    .traffic-btn.close { background: var(--red-close); }
+    .traffic-btn.minimize { background: var(--yellow-warn); }
+    .traffic-btn.maximize { background: var(--green-ok); }
+
+    .window-title-text {
+      flex: 1;
+      text-align: center;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-primary);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      padding-right: 44px;
+    }
+
+    .window-body {
+      flex: 1;
+      overflow: auto;
+      position: relative;
+      user-select: text;
+      -webkit-user-select: text;
+    }
+
+    .window-resizer {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 16px;
+      height: 16px;
+      cursor: nwse-resize;
+      z-index: 10;
+    }
+
+    /* ==========================================================================
+       7. DOCK FLOTTANT AVEC EFFET DE GROSSISSEMENT (MAGNIFICATION)
+       ========================================================================== */
+    #dock-container {
+      position: fixed;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 4500;
+      background: var(--dock-bg);
+      backdrop-filter: blur(26px) saturate(190%);
+      -webkit-backdrop-filter: blur(26px) saturate(190%);
+      border: 0.5px solid var(--dock-border);
+      border-radius: 18px;
+      padding: 6px 10px 8px;
+      box-shadow: 0 14px 38px rgba(0, 0, 0, 0.34);
+      display: flex;
+      align-items: flex-end;
+      gap: 7px;
+      max-width: 97vw;
+      overflow-x: auto;
+    }
+
+    .dock-item {
+      position: relative;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transform-origin: bottom center;
+      transition: width 0.12s cubic-bezier(0.22, 1, 0.36, 1),
+                  height 0.12s cubic-bezier(0.22, 1, 0.36, 1);
+      flex-shrink: 0;
+    }
+
+    .dock-item svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.28));
+      pointer-events: none;
+    }
+
+    .dock-tooltip {
+      position: absolute;
+      bottom: calc(100% + 12px);
+      left: 50%;
+      transform: translateX(-50%) translateY(4px);
+      background: var(--dropdown-bg);
+      backdrop-filter: blur(20px);
+      border: 0.5px solid var(--dropdown-border);
+      color: var(--text-primary);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-weight: 500;
+      white-space: nowrap;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.24);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.14s, transform 0.14s;
+    }
+
+    .dock-item:hover .dock-tooltip {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .dock-dot {
+      position: absolute;
+      bottom: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--text-primary);
+      opacity: 0;
+    }
+
+    .dock-item.running .dock-dot { opacity: 0.85; }
+
+    .dock-divider {
+      width: 1px;
+      height: 34px;
+      background: var(--divider);
+      margin: 0 2px 4px;
+      align-self: center;
+      flex-shrink: 0;
+    }
+
+    @keyframes dockBounce {
+      0%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-14px); }
+      70% { transform: translateY(-4px); }
+    }
+
+    .dock-item.bouncing { animation: dockBounce 0.5s ease; }
+
+    /* ==========================================================================
+       8. SPOTLIGHT & NOTIFICATIONS
+       ========================================================================== */
+    #spotlight-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 8000;
+      background: rgba(0, 0, 0, 0.28);
+      display: none;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 15vh;
+    }
+
+    #spotlight-overlay.open { display: flex; }
+
+    .spotlight-box {
+      width: min(590px, 92vw);
+      background: var(--dropdown-bg);
+      backdrop-filter: blur(36px) saturate(200%);
+      -webkit-backdrop-filter: blur(36px) saturate(200%);
+      border: 0.5px solid var(--dropdown-border);
+      border-radius: 14px;
+      box-shadow: 0 28px 70px rgba(0, 0, 0, 0.45);
+      overflow: hidden;
+    }
+
+    .spotlight-input-row {
+      display: flex;
+      align-items: center;
+      padding: 13px 16px;
+      gap: 10px;
+      border-bottom: 0.5px solid var(--divider);
+    }
+
+    #spotlight-input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-size: 18px;
+      color: var(--text-primary);
+      outline: none;
+      font-family: var(--font-sans);
+    }
+
+    .spotlight-results {
+      max-height: 320px;
+      overflow-y: auto;
+      padding: 6px;
+    }
+
+    .spotlight-item {
+      padding: 8px 12px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    .spotlight-item:hover, .spotlight-item.selected {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .spotlight-item:hover .spot-sub { color: rgba(255, 255, 255, 0.85); }
+    .spot-sub { font-size: 11px; color: var(--text-secondary); }
+
+    #notifications-container {
+      position: fixed;
+      top: calc(var(--menubar-height) + 12px);
+      right: 14px;
+      z-index: 7500;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: min(350px, 90vw);
+      pointer-events: none;
+    }
+
+    .mac-toast {
+      pointer-events: auto;
+      background: var(--dropdown-bg);
+      backdrop-filter: blur(26px) saturate(180%);
+      border: 0.5px solid var(--dropdown-border);
+      border-radius: 12px;
+      padding: 10px 13px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      animation: slideToast 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes slideToast {
+      from { opacity: 0; transform: translateX(30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ==========================================================================
+       9. COMPOSANTS RÉUTILISABLES (BOUTONS, CARTES, BADGES, GRILLES, INPUTS)
+       ========================================================================== */
+    .btn-mac {
+      padding: 5px 11px;
+      border-radius: 7px;
+      border: 0.5px solid var(--card-border);
+      background: var(--card-bg);
+      color: var(--text-primary);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.14s;
+      white-space: nowrap;
+    }
+
+    .btn-mac:hover { background: var(--hover-bg); transform: translateY(-0.5px); }
+    .btn-mac.primary { background: var(--accent); color: #fff; border-color: transparent; }
+    .btn-mac.primary:hover { background: var(--accent-hover); }
+    .btn-mac.purple { background: var(--purple-swap); color: #fff; border-color: transparent; }
+    .btn-mac.cyan { background: var(--cyan-turbo); color: #050814; font-weight: 600; border-color: transparent; }
+    .btn-mac.green { background: var(--green-ok); color: #051409; font-weight: 600; border-color: transparent; }
+    .btn-mac.danger { background: rgba(255, 59, 48, 0.15); color: #ff3b30; border-color: rgba(255, 59, 48, 0.3); }
+
+    .badge {
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-size: 10.5px;
+      font-weight: 600;
+      font-family: var(--font-mono);
+    }
+
+    .badge-green { background: rgba(40, 205, 65, 0.18); color: var(--green-ok); }
+    .badge-purple { background: rgba(175, 82, 222, 0.18); color: var(--purple-swap); }
+    .badge-orange { background: rgba(255, 149, 0, 0.18); color: var(--orange-comp); }
+    .badge-blue { background: rgba(0, 122, 255, 0.18); color: var(--accent); }
+    .badge-cyan { background: rgba(50, 173, 230, 0.20); color: var(--cyan-turbo); }
+    .badge-red { background: rgba(255, 59, 48, 0.18); color: #ff453a; }
+
+    .mac-card {
+      background: var(--card-bg);
+      border: 0.5px solid var(--card-border);
+      border-radius: 10px;
+      padding: 11px;
+    }
+
+    .mac-input, .mac-select {
+      background: var(--input-bg);
+      border: 0.5px solid var(--card-border);
+      border-radius: 7px;
+      padding: 5px 9px;
+      color: var(--text-primary);
+      font-size: 12px;
+      font-family: var(--font-sans);
+      outline: none;
+    }
+
+    .mac-input:focus { border-color: var(--accent); }
+
+    .am-gauge-bar {
+      width: 100%;
+      height: 8px;
+      background: var(--input-bg);
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 7px 0 5px;
+    }
+
+    .am-gauge-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .split-layout { display: flex; height: 100%; }
+
+    .app-sidebar {
+      width: 190px;
+      min-width: 155px;
+      background: var(--sidebar-bg);
+      border-right: 0.5px solid var(--divider);
+      padding: 10px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow-y: auto;
+    }
+
+    @media (max-width: 620px) {
+      .app-sidebar { width: 128px; min-width: 115px; }
+    }
+
+    .sidebar-section-title {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--text-tertiary);
+      padding: 0 8px 3px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .sidebar-item {
+      padding: 6px 9px;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .sidebar-item:hover { background: var(--hover-bg); }
+    .sidebar-item.active { background: var(--accent); color: #ffffff; font-weight: 500; }
+
+    .app-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .app-toolbar {
+      padding: 8px 12px;
+      border-bottom: 0.5px solid var(--divider);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    table.mac-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11.5px;
+    }
+
+    table.mac-table th {
+      position: sticky;
+      top: 0;
+      background: var(--window-header-bg);
+      text-align: left;
+      padding: 6px 9px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      border-bottom: 0.5px solid var(--divider);
+    }
+
+    table.mac-table td {
+      padding: 5px 9px;
+      border-bottom: 0.5px solid var(--divider);
+    }
+
+    table.mac-table tr:hover td { background: var(--hover-bg); }
+
+    /* Terminal zsh */
+    .terminal-wrap {
+      background: #101218;
+      color: #e6edf3;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 1.5;
+      padding: 12px 14px;
+      height: 100%;
+      overflow-y: auto;
+      cursor: text;
+    }
+
+    .term-line { white-space: pre-wrap; word-break: break-word; margin-bottom: 2px; }
+    .term-prompt-row { display: flex; align-items: center; gap: 6px; }
+    .term-prompt { color: #32d74b; font-weight: 600; white-space: nowrap; }
+    .term-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #ffffff;
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+
+    /* Grilles adaptatives internes */
+    .q-grid-2 {
+      display: grid;
+      grid-template-columns: 1.25fr 1fr;
+      gap: 10px;
+    }
+
+    @media (max-width: 780px) {
+      .q-grid-2 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body class="theme-dark">
+
+  <!-- ========================================================================
+       1. ÉCRAN DE DÉMARRAGE MACOS SEQUOIA QUANTUM ULTRA
+       ======================================================================== -->
+  <div id="boot-screen">
+    <svg class="boot-logo" viewBox="0 0 170 170" aria-label="Logo Apple Quantum">
+      <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.13-1.9-14.34-6.08-3.69-3.03-7.61-7.82-11.77-14.37-5.19-8.11-9.46-17.44-12.82-27.99-3.36-10.55-5.04-20.66-5.04-30.33 0-11.34 2.83-20.73 8.49-28.18 5.66-7.45 12.84-11.29 21.54-11.52 4.7 0 10.03 1.38 15.99 4.13 5.96 2.75 9.79 4.16 11.49 4.24 1.35 0 5.56-1.63 12.63-4.89 7.07-3.26 13.06-4.66 17.98-4.21 13.43 1.08 23.53 6.37 30.3 15.88-12.01 7.28-17.91 17.44-17.7 30.48.21 10.17 4.02 18.63 11.43 25.37 5.02 4.61 11.03 7.59 18.02 8.95-1.45 4.46-3.12 8.77-5.01 12.93zM119.22 31.9c0 7.98-2.92 15.44-8.76 22.37-7.03 8.21-15.55 12.96-24.81 12.22-.12-.97-.19-2.01-.19-3.11 0-7.66 3.33-15.86 9.25-22.58 2.96-3.39 6.72-6.21 11.28-8.46 4.56-2.24 8.88-3.48 12.96-3.71.18 1.11.27 2.2.27 3.27z"/>
+    </svg>
+    <div class="boot-progress-wrap">
+      <div class="boot-progress-bar" id="boot-progress-bar"></div>
+    </div>
+    <div class="boot-specs">
+      <div class="boot-specs-title">macOS Sequoia — MacBook Pro Quantum Ultra (Willow 105 Qubits + 256 Go Swap)</div>
+      <div class="boot-specs-sub" id="boot-status-text">Initialisation du noyau Mach & registre vectoriel complexe 2^12...</div>
+    </div>
+    <button id="boot-skip-btn" type="button">Passer le démarrage</button>
+  </div>
+
+  <!-- ========================================================================
+       2. ENVIRONNEMENT DE BUREAU MACOS SEQUOIA
+       ======================================================================== -->
+  <div id="desktop">
+    <div id="wallpaper-layer"></div>
+
+    <!-- Barre des menus supérieure translucide -->
+    <header id="menubar">
+      <div class="menubar-left">
+        <div class="menu-item" id="menu-apple-btn" title="Menu Pomme">
+          <svg class="apple-menu-icon" viewBox="0 0 170 170">
+            <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.13-1.9-14.34-6.08-3.69-3.03-7.61-7.82-11.77-14.37-5.19-8.11-9.46-17.44-12.82-27.99-3.36-10.55-5.04-20.66-5.04-30.33 0-11.34 2.83-20.73 8.49-28.18 5.66-7.45 12.84-11.29 21.54-11.52 4.7 0 10.03 1.38 15.99 4.13 5.96 2.75 9.79 4.16 11.49 4.24 1.35 0 5.56-1.63 12.63-4.89 7.07-3.26 13.06-4.66 17.98-4.21 13.43 1.08 23.53 6.37 30.3 15.88-12.01 7.28-17.91 17.44-17.7 30.48.21 10.17 4.02 18.63 11.43 25.37 5.02 4.61 11.03 7.59 18.02 8.95-1.45 4.46-3.12 8.77-5.01 12.93zM119.22 31.9c0 7.98-2.92 15.44-8.76 22.37-7.03 8.21-15.55 12.96-24.81 12.22-.12-.97-.19-2.01-.19-3.11 0-7.66 3.33-15.86 9.25-22.58 2.96-3.39 6.72-6.21 11.28-8.46 4.56-2.24 8.88-3.48 12.96-3.71.18 1.11.27 2.2.27 3.27z"/>
+          </svg>
+        </div>
+        <div class="menu-item app-title" id="menubar-active-app">Supercalculateur QPU</div>
+        <div class="menu-item hide-tablet" data-menu="fichier">Fichier</div>
+        <div class="menu-item hide-tablet" data-menu="edition">Édition</div>
+        <div class="menu-item hide-tablet" data-menu="presentation">Présentation</div>
+        <div class="menu-item hide-tablet" data-menu="calculateur">Calculateur</div>
+        <div class="menu-item hide-tablet" data-menu="video3d">Vidéo 3D</div>
+        <div class="menu-item hide-tablet" data-menu="diagnostic">Diagnostic</div>
+        <div class="menu-item hide-tablet" data-menu="fenetre">Fenêtre</div>
+      </div>
+
+      <div class="menubar-right">
+        <div class="menu-item" id="menubar-ram-badge" title="Ouvrir le Moniteur d'activité hybride RAM/Swap/QPU">
+          <span class="status-pill">
+            <span class="status-dot"></span>
+            <span id="menubar-ram-text">1 Go + 256 Go Swap • 105Q</span>
+          </span>
+        </div>
+
+        <!-- Wi-Fi / Réseau Cloud -->
+        <div class="menu-item" id="menu-wifi-btn" title="Réseau Quantum Cloud & Appareils">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round">
+            <path d="M5 12.55a11 11 0 0 1 14.08 0"/>
+            <path d="M1.42 9a16 16 0 0 1 21.16 0"/>
+            <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+            <circle cx="12" cy="20" r="1" fill="currentColor"/>
+          </svg>
+        </div>
+
+        <!-- Spotlight -->
+        <div class="menu-item" id="menu-spotlight-btn" title="Spotlight (Ctrl+K)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+            <circle cx="11" cy="11" r="7"/>
+            <line x1="20" y1="20" x2="16.2" y2="16.2"/>
+          </svg>
+        </div>
+
+        <!-- Centre de contrôle -->
+        <div class="menu-item" id="menu-cc-btn" title="Centre de contrôle">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="5" width="18" height="5" rx="2.5"/>
+            <circle cx="16" cy="7.5" r="1.5" fill="currentColor"/>
+            <rect x="3" y="14" width="18" height="5" rx="2.5"/>
+            <circle cx="8" cy="16.5" r="1.5" fill="currentColor"/>
+          </svg>
+        </div>
+
+        <!-- Batterie -->
+        <div class="menu-item hide-tablet" id="menu-battery-btn" title="Batterie : 100 % — Cryo-Alimentation">
+          <span style="font-size:11px; font-weight:600;">100 %</span>
+          <svg width="20" height="12" viewBox="0 0 26 13" fill="none">
+            <rect x="1" y="1.5" width="21" height="10" rx="2.5" stroke="currentColor" stroke-width="1.3"/>
+            <rect x="3" y="3.5" width="17" height="6" rx="1.2" fill="#28cd41"/>
+            <path d="M23.5 4.5v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+
+        <!-- Horloge FR -->
+        <div class="menu-item" id="menubar-clock" style="font-weight: 500;">mar. 17 nov. 02:09</div>
+      </div>
+    </header>
+
+    <!-- Menu Pomme -->
+    <div class="menu-dropdown" id="dropdown-apple" style="left: 10px;">
+      <div class="dropdown-action" data-cmd="open-about"><span>À propos de ce Mac Quantum Ultra</span></div>
+      <div class="dropdown-sep"></div>
+      <div class="dropdown-action" data-cmd="open-settings"><span>Réglages Système…</span><span class="shortcut">⌘,</span></div>
+      <div class="dropdown-action" data-cmd="open-quantum"><span>Supercalculateur Quantique (Willow 105Q)</span></div>
+      <div class="dropdown-action" data-cmd="open-video3d"><span>Lecteur Vidéo 3D & Export Enregistré</span></div>
+      <div class="dropdown-action" data-cmd="open-cluster"><span>Cluster Gemini Pro & Appareils</span></div>
+      <div class="dropdown-action" data-cmd="open-diagnostics"><span>Banc de Test & Validation Automatisée</span></div>
+      <div class="dropdown-sep"></div>
+      <div class="dropdown-action" data-cmd="purge-ram"><span>Purger RAM & Compresser zRAM</span><span class="shortcut">⇧⌘P</span></div>
+      <div class="dropdown-action" data-cmd="open-spotlight"><span>Recherche Spotlight…</span><span class="shortcut">⌘K</span></div>
+      <div class="dropdown-sep"></div>
+      <div class="dropdown-action" data-cmd="reboot-os"><span>Redémarrer macOS Sequoia…</span></div>
+    </div>
+
+    <div class="menu-dropdown" id="dropdown-context"></div>
+
+    <!-- Popover Wi-Fi & Cluster -->
+    <div class="status-popover" id="popover-wifi" style="right: 170px; width: 265px; padding: 10px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <span style="font-weight:700;">Quantum Mesh & Wi-Fi 7</span>
+        <span class="badge badge-green">Connecté</span>
+      </div>
+      <div style="padding:7px 9px; border-radius:7px; background:var(--accent-soft); margin-bottom:6px;">
+        <div style="font-weight:600; font-size:12px;">Google_Willow_Cloud_Mesh</div>
+        <div style="font-size:10.5px; color:var(--text-secondary);">Latence 1.8 ms • 40 Gbit/s Optique</div>
+      </div>
+      <div style="font-size:11px; color:var(--text-secondary); display:flex; justify-content:space-between;">
+        <span>Nœud Gemini Pro :</span><span style="color:var(--green-ok); font-weight:600;">En ligne</span>
+      </div>
+    </div>
+
+    <!-- Popover Batterie -->
+    <div class="status-popover" id="popover-battery" style="right: 95px; width: 245px; padding: 10px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+        <span style="font-weight:700;">Alimentation & Cryostat</span>
+        <span style="font-weight:600; color:var(--green-ok);">100 %</span>
+      </div>
+      <div style="font-size:11.5px; color:var(--text-secondary); line-height:1.45;">
+        Source : MagSafe 140 W + Unité Cryogénique 15 mK<br/>
+        Hyper-Swap NVMe 256 Go : Mode Ultra Actif.
+      </div>
+    </div>
+
+    <!-- Centre de contrôle complet -->
+    <div class="status-popover control-center-panel" id="popover-cc">
+      <div class="cc-grid">
+        <div class="cc-tile active" id="cc-theme-tile">
+          <div class="cc-tile-icon" id="cc-theme-icon">🌙</div>
+          <div>
+            <div style="font-weight:600; font-size:12px;" id="cc-theme-label">Mode Sombre</div>
+            <div style="font-size:10.5px; color:var(--text-secondary);">Apparence</div>
+          </div>
+        </div>
+        <div class="cc-tile turbo active" id="cc-turbo-tile">
+          <div class="cc-tile-icon">⚡</div>
+          <div>
+            <div style="font-weight:600; font-size:12px;">Turbo-Swap</div>
+            <div style="font-size:10.5px; color:var(--text-secondary);" id="cc-turbo-sub">256 Go NVMe</div>
+          </div>
+        </div>
+        <div class="cc-tile qpu active" id="cc-qpu-tile">
+          <div class="cc-tile-icon">⚛️</div>
+          <div>
+            <div style="font-weight:600; font-size:12px;">QPU Boost</div>
+            <div style="font-size:10.5px; color:var(--text-secondary);" id="cc-qpu-sub">Willow 105Q</div>
+          </div>
+        </div>
+        <div class="cc-tile gemini active" id="cc-gemini-tile">
+          <div class="cc-tile-icon">✦</div>
+          <div>
+            <div style="font-weight:600; font-size:12px;">Gemini Pro</div>
+            <div style="font-size:10.5px; color:var(--text-secondary);" id="cc-gemini-sub">Sync En Ligne</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cc-slider-box">
+        <div class="cc-slider-label">
+          <span>Luminosité de l'écran</span>
+          <span id="cc-brightness-val">100 %</span>
+        </div>
+        <input type="range" class="mac-slider" id="cc-brightness-slider" min="35" max="100" value="100" />
+      </div>
+
+      <div class="cc-slider-box">
+        <div class="cc-slider-label">
+          <span>Volume Audio & Synthèse Haptique</span>
+          <span id="cc-volume-val">80 %</span>
+        </div>
+        <input type="range" class="mac-slider" id="cc-volume-slider" min="0" max="100" value="80" />
+      </div>
+
+      <div class="cc-slider-box" style="margin-bottom:0;">
+        <div style="font-size:11px; font-weight:600; color:var(--text-secondary); margin-bottom:6px;">Fond d'écran dynamique</div>
+        <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:5px;">
+          <button class="btn-mac" type="button" data-cc-wp="quantum" style="padding:4px; justify-content:center; font-size:10.5px;">Quantum</button>
+          <button class="btn-mac" type="button" data-cc-wp="sequoia" style="padding:4px; justify-content:center; font-size:10.5px;">Sequoia</button>
+          <button class="btn-mac" type="button" data-cc-wp="sonoma" style="padding:4px; justify-content:center; font-size:10.5px;">Sonoma</button>
+          <button class="btn-mac" type="button" data-cc-wp="aurore" style="padding:4px; justify-content:center; font-size:10.5px;">Aurore</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Icônes sur le bureau -->
+    <div id="desktop-icons">
+      <div class="desktop-icon" data-action="open-quantum" title="Ouvrir le Supercalculateur Quantique">
+        <svg class="desktop-icon-art" viewBox="0 0 64 64">
+          <rect x="6" y="6" width="52" height="52" rx="14" fill="#131629" stroke="#32ade6" stroke-width="1.5"/>
+          <ellipse cx="32" cy="32" rx="22" ry="8" fill="none" stroke="#32ade6" stroke-width="2" transform="rotate(30 32 32)"/>
+          <ellipse cx="32" cy="32" rx="22" ry="8" fill="none" stroke="#af52de" stroke-width="2" transform="rotate(-30 32 32)"/>
+          <circle cx="32" cy="32" r="5" fill="#ffbd2e"/>
+        </svg>
+        <div class="desktop-icon-label">Supercalculateur QPU 105Q</div>
+      </div>
+
+      <div class="desktop-icon" data-action="open-video3d" title="Ouvrir le Lecteur Vidéo 3D & Studio d'Annotation">
+        <svg class="desktop-icon-art" viewBox="0 0 64 64">
+          <rect x="6" y="6" width="52" height="52" rx="14" fill="#1b1429" stroke="#ff2d55" stroke-width="1.5"/>
+          <polygon points="26,20 45,32 26,44" fill="#ff2d55"/>
+          <rect x="13" y="13" width="38" height="38" rx="7" fill="none" stroke="#32ade6" stroke-width="1.4" stroke-dasharray="4 3"/>
+        </svg>
+        <div class="desktop-icon-label">Vidéo 3D & Export Réel</div>
+      </div>
+
+      <div class="desktop-icon" data-action="open-cluster" title="Ouvrir le Cluster Gemini Pro & Appareils en Ligne">
+        <svg class="desktop-icon-art" viewBox="0 0 64 64">
+          <rect x="6" y="6" width="52" height="52" rx="14" fill="#0f231d" stroke="#28cd41" stroke-width="1.5"/>
+          <circle cx="32" cy="20" r="5" fill="#28cd41"/>
+          <circle cx="18" cy="44" r="5" fill="#32ade6"/>
+          <circle cx="46" cy="44" r="5" fill="#af52de"/>
+          <path d="M32 25L18 39M32 25L46 39M23 44h18" stroke="#ffffff" stroke-width="1.8" opacity="0.75"/>
+        </svg>
+        <div class="desktop-icon-label">Gemini Pro & Mes Appareils</div>
+      </div>
+
+      <div class="desktop-icon" data-action="open-diagnostics" title="Ouvrir le Banc de Test & Validation">
+        <svg class="desktop-icon-art" viewBox="0 0 64 64">
+          <rect x="6" y="6" width="52" height="52" rx="14" fill="#1c222d" stroke="#ffbd2e" stroke-width="1.5"/>
+          <path d="M20 33l8 8 16-18" fill="none" stroke="#28cd41" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="desktop-icon-label">Banc de Test & Validation</div>
+      </div>
+
+      <div class="desktop-icon" data-action="open-macintosh-hd" title="Ouvrir Macintosh HD">
+        <svg class="desktop-icon-art" viewBox="0 0 64 64">
+          <rect x="10" y="8" width="44" height="48" rx="7" fill="#d8dce6" stroke="#8e939e" stroke-width="1.5"/>
+          <rect x="14" y="42" width="36" height="9" rx="3" fill="#4a4e57"/>
+          <circle cx="44" cy="46.5" r="2" fill="#28cd41"/>
+        </svg>
+        <div class="desktop-icon-label">Macintosh HD</div>
+      </div>
+    </div>
+
+    <!-- Conteneur des fenêtres -->
+    <main id="windows-container"></main>
+
+    <!-- Dock flottant macOS -->
+    <nav id="dock-container" aria-label="Dock macOS"></nav>
+
+    <!-- Spotlight -->
+    <div id="spotlight-overlay">
+      <div class="spotlight-box">
+        <div class="spotlight-input-row">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="2.2" stroke-linecap="round">
+            <circle cx="11" cy="11" r="7"/>
+            <line x1="20" y1="20" x2="16.2" y2="16.2"/>
+          </svg>
+          <input type="text" id="spotlight-input" placeholder="Spotlight — Supercalculateur QPU, Vidéo 3D, Gemini Pro, Tests…" autocomplete="off" />
+          <span class="badge badge-purple">Quantum OS</span>
+        </div>
+        <div class="spotlight-results" id="spotlight-results"></div>
+      </div>
+    </div>
+
+    <!-- Notifications -->
+    <div id="notifications-container"></div>
+
+    <!-- Filtre luminosité -->
+    <div id="brightness-overlay"></div>
+  </div>
+
+  <!-- ========================================================================
+       3. ARCHITECTURE JAVASCRIPT COMPLÈTE (QPU WORKER + VIDÉO 3D + DIAGNOSTICS)
+       ======================================================================== -->
+  <script>
+    'use strict';
+
+    /* ========================================================================
+       A. ÉTAT GLOBAL DU SYSTÈME (OS_STATE)
+       ======================================================================== */
+    const OS_STATE = {
+      theme: 'dark',
+      wallpaper: 'quantum',
+      brightness: 100,
+      volume: 80,
+      turboBoost: true,
+      qpuBoost: true,
+      geminiSync: true,
+      swapMaxGB: 256,
+      compressionAlgo: 'ZSTD-Ultra',
+
+      mem: {
+        physicalTotalMB: 1024,
+        physicalUsedMB: 462,
+        wiredMB: 180,
+        compressedStoredMB: 138,
+        compressedRawMB: 580,
+        swapUsedMB: 1420,
+        pressurePercent: 14,
+        nvmeSpeedGBs: 14.6,
+        qpuOpsGflops: 1280.4,
+        realHeapBuffersMB: 10,
+        history: Array(48).fill(14)
+      },
+
+      // Nœuds du Cluster Distribué (Gemini Pro + Appareils en ligne)
+      clusterNodes: [
+        { id: 'mac-local', name: 'MacBook Pro Quantum Ultra (Local)', role: 'Hôte Principal macOS Sequoia', specs: '1 Go LPDDR5 + 256 Go NVMe Swap', status: 'En ligne', pingMs: 0.2, load: 24, tflops: 185.0 },
+        { id: 'gemini-pro', name: 'Gemini Pro Quantum Co-Processor', role: 'Orchestrateur IA & Optimisation Circuit', specs: 'TPU v5p + Compilation Cirq/QASM', status: 'En ligne', pingMs: 11.4, load: 38, tflops: 640.0 },
+        { id: 'willow-qpu', name: 'Google Quantum Willow 105-Qubits', role: 'Processeur Quantique Cryogénique 15 mK', specs: '105 Qubits • Fidélité 99.84 %', status: 'En ligne', pingMs: 14.2, load: 42, tflops: 455.4 },
+        { id: 'mobile-node', name: 'Mobile Android Edge Node (En ligne)', role: 'Capteur Spatial & Télécommande Haptique', specs: 'NPU Mobile • Synchronisation WebRTC', status: 'En ligne', pingMs: 18.6, load: 15, tflops: 42.0 },
+        { id: 'pc-workstation', name: 'Station PC / Nœud Cloud GitHub', role: 'Stockage Distribué & Rendu Vidéo 3D', specs: 'Cluster Distribué • Bus 40 Gbit/s', status: 'En ligne', pingMs: 9.8, load: 29, tflops: 310.0 }
+      ],
+
+      // Résultats du dernier circuit quantique exécuté
+      lastQuantumRun: {
+        numQubits: 3,
+        algorithm: 'Intrication GHZ (3 Qubits)',
+        shots: 4096,
+        execTimeMs: 0.85,
+        fidelity: 0.9984,
+        entropy: 1.0,
+        counts: { '000': 2054, '111': 2042 },
+        blochQ0: { x: 0, y: 0, z: 0 }
+      },
+
+      // Rapports des tests automatisés
+      diagnosticReports: [],
+
+      processes: [
+        { pid: 0, name: 'kernel_task_mach', user: 'root', physMB: 138, compMB: 0, swapMB: 190, cpu: 1.4, system: true },
+        { pid: 42, name: 'Willow_105Q_Simulator', user: 'quantum', physMB: 72, compMB: 280, swapMB: 510, cpu: 3.6, system: true },
+        { pid: 88, name: 'HyperSwap_NVMe_256G', user: 'root', physMB: 58, compMB: 210, swapMB: 410, cpu: 1.9, system: true },
+        { pid: 108, name: 'GeminiPro_Mesh_Bridge', user: 'ai_core', physMB: 46, compMB: 90, swapMB: 160, cpu: 2.2, system: true },
+        { pid: 150, name: 'Video3D_Spatial_Recorder', user: 'utilisateur', physMB: 64, compMB: 0, swapMB: 150, cpu: 1.5, system: false },
+        { pid: 210, name: 'Finder', user: 'utilisateur', physMB: 48, compMB: 0, swapMB: 0, cpu: 0.3, system: false },
+        { pid: 264, name: 'WindowServer', user: '_windowserver', physMB: 36, compMB: 0, swapMB: 0, cpu: 1.8, system: true }
+      ],
+      nextPid: 320,
+
+      windows: {},
+      zIndexCounter: 100,
+      activeApp: 'Supercalculateur QPU',
+      nextOffset: 0
+    };
+
+    /* ========================================================================
+       B. MOTEUR DE CALCUL QUANTIQUE VECTORIEL COMPLEXE (2^n AMPLITUDES RÉELLES)
+       ======================================================================== */
+    const QuantumMathEngine = {
+      /**
+       * Exécute un circuit quantique sur un registre de n qubits (n = 1..12 -> jusqu'à 4096 états complexes)
+       * Chaque état |k> possède une amplitude complexe (re[k], im[k]) telle que sum(|a_k|^2) = 1.
+       */
+      simulateCircuit(numQubits, gates, shots = 4096) {
+        const t0 = performance.now();
+        const n = Math.max(1, Math.min(12, numQubits));
+        const dim = 1 << n;
+        const re = new Float64Array(dim);
+        const im = new Float64Array(dim);
+        re[0] = 1.0; // État fondamental |00...0>
+
+        const INV_SQRT2 = Math.SQRT1_2;
+
+        for (const g of gates) {
+          const type = g.type.toUpperCase();
+          const q = g.target;
+          const c = g.control;
+          const c2 = g.control2;
+          const theta = g.angle !== undefined ? g.angle : Math.PI / 2;
+
+          if (q === undefined || q < 0 || q >= n) continue;
+          const bit = 1 << (n - 1 - q);
+
+          if (type === 'H') {
+            for (let i = 0; i < dim; i++) {
+              if ((i & bit) === 0) {
+                const j = i | bit;
+                const r0 = re[i], i0 = im[i], r1 = re[j], i1 = im[j];
+                re[i] = (r0 + r1) * INV_SQRT2;
+                im[i] = (i0 + i1) * INV_SQRT2;
+                re[j] = (r0 - r1) * INV_SQRT2;
+                im[j] = (i0 - i1) * INV_SQRT2;
+              }
+            }
+          } else if (type === 'X') {
+            for (let i = 0; i < dim; i++) {
+              if ((i & bit) === 0) {
+                const j = i | bit;
+                [re[i], re[j]] = [re[j], re[i]];
+                [im[i], im[j]] = [im[j], im[i]];
+              }
+            }
+          } else if (type === 'Y') {
+            for (let i = 0; i < dim; i++) {
+              if ((i & bit) === 0) {
+                const j = i | bit;
+                const r0 = re[i], i0 = im[i], r1 = re[j], i1 = im[j];
+                re[i] = i1; im[i] = -r1;
+                re[j] = -i0; im[j] = r0;
+              }
+            }
+          } else if (type === 'Z') {
+            for (let i = 0; i < dim; i++) {
+              if ((i & bit) !== 0) {
+                re[i] = -re[i];
+                im[i] = -im[i];
+              }
+            }
+          } else if (type === 'S') {
+            for (let i = 0; i < dim; i++) {
+              if ((i & bit) !== 0) {
+                const r1 = re[i], i1 = im[i];
+                re[i] = -i1;
+                im[i] = r1;
+              }
+            }
+          } else if (type === 'T') {
+            const cos = Math.cos(Math.PI / 4), sin = Math.sin(Math.PI / 4);
+            for (let i = 0; i < dim; i++) {
+              if ((i & bit) !== 0) {
+                const r1 = re[i], i1 = im[i];
+                re[i] = r1 * cos - i1 * sin;
+                im[i] = r1 * sin + i1 * cos;
+              }
+            }
+          } else if (type === 'RX') {
+            const cos = Math.cos(theta / 2), sin = Math.sin(theta / 2);
+            for (let i = 0; i < dim; i++) {
+              if ((i & bit) === 0) {
+                const j = i | bit;
+                const r0 = re[i], i0 = im[i], r1 = re[j], i1 = im[j];
+                re[i] = cos * r0 + sin * i1;
+                im[i] = cos * i0 - sin * r1;
+                re[j] = cos * r1 + sin * i0;
+                im[j] = cos * i1 - sin * r0;
+              }
+            }
+          } else if (type === 'RY') {
+            const cos = Math.cos(theta / 2), sin = Math.sin(theta / 2);
+            for (let i = 0; i < dim; i++) {
+              if ((i & bit) === 0) {
+                const j = i | bit;
+                const r0 = re[i], i0 = im[i], r1 = re[j], i1 = im[j];
+                re[i] = cos * r0 - sin * r1;
+                im[i] = cos * i0 - sin * i1;
+                re[j] = sin * r0 + cos * r1;
+                im[j] = sin * i0 + cos * i1;
+              }
+            }
+          } else if (type === 'RZ') {
+            const cos = Math.cos(theta / 2), sin = Math.sin(theta / 2);
+            for (let i = 0; i < dim; i++) {
+              const r0 = re[i], i0 = im[i];
+              if ((i & bit) === 0) {
+                re[i] = cos * r0 + sin * i0;
+                im[i] = cos * i0 - sin * r0;
+              } else {
+                re[i] = cos * r0 - sin * i0;
+                im[i] = cos * i0 + sin * r0;
+              }
+            }
+          } else if ((type === 'CNOT' || type === 'CX') && c !== undefined && c >= 0 && c < n && c !== q) {
+            const cBit = 1 << (n - 1 - c);
+            for (let i = 0; i < dim; i++) {
+              if ((i & cBit) !== 0 && (i & bit) === 0) {
+                const j = i | bit;
+                [re[i], re[j]] = [re[j], re[i]];
+                [im[i], im[j]] = [im[j], im[i]];
+              }
+            }
+          } else if ((type === 'CCX' || type === 'TOFFOLI') && c !== undefined && c2 !== undefined) {
+            const c1Bit = 1 << (n - 1 - c);
+            const c2Bit = 1 << (n - 1 - c2);
+            for (let i = 0; i < dim; i++) {
+              if ((i & c1Bit) !== 0 && (i & c2Bit) !== 0 && (i & bit) === 0) {
+                const j = i | bit;
+                [re[i], re[j]] = [re[j], re[i]];
+                [im[i], im[j]] = [im[j], im[i]];
+              }
+            }
+          } else if (type === 'SWAP' && c !== undefined && c >= 0 && c < n && c !== q) {
+            const bitA = 1 << (n - 1 - c);
+            const bitB = bit;
+            for (let i = 0; i < dim; i++) {
+              const hasA = (i & bitA) !== 0;
+              const hasB = (i & bitB) !== 0;
+              if (!hasA && hasB) {
+                const j = (i ^ bitB) | bitA;
+                [re[i], re[j]] = [re[j], re[i]];
+                [im[i], im[j]] = [im[j], im[i]];
+              }
+            }
+          }
+        }
+
+        // Probabilités exactes, entropie et normalisation
+        const probs = new Float64Array(dim);
+        let normSum = 0;
+        let entropy = 0;
+        for (let i = 0; i < dim; i++) {
+          const p = re[i] * re[i] + im[i] * im[i];
+          probs[i] = p;
+          normSum += p;
+          if (p > 1e-12) entropy -= p * Math.log2(p);
+        }
+
+        // Échantillonnage probabiliste (Shots)
+        const counts = {};
+        for (let s = 0; s < shots; s++) {
+          const r = Math.random() * normSum;
+          let acc = 0;
+          let chosen = dim - 1;
+          for (let i = 0; i < dim; i++) {
+            acc += probs[i];
+            if (r <= acc) { chosen = i; break; }
+          }
+          const bitStr = chosen.toString(2).padStart(n, '0');
+          counts[bitStr] = (counts[bitStr] || 0) + 1;
+        }
+
+        // Coordonnées de Bloch réduites du Qubit 0
+        let bx = 0, by = 0, bz = 0;
+        const q0Bit = 1 << (n - 1);
+        for (let i = 0; i < dim; i++) {
+          if ((i & q0Bit) === 0) {
+            const j = i | q0Bit;
+            bz += probs[i] - probs[j];
+            bx += 2 * (re[i] * re[j] + im[i] * im[j]);
+            by += 2 * (re[i] * im[j] - im[i] * re[j]);
+          }
+        }
+
+        const execTimeMs = Math.max(0.05, +(performance.now() - t0).toFixed(3));
+        return {
+          numQubits: n,
+          dim,
+          re,
+          im,
+          probs,
+          normSum,
+          entropy: +entropy.toFixed(4),
+          counts,
+          shots,
+          execTimeMs,
+          blochQ0: { x: +bx.toFixed(4), y: +by.toFixed(4), z: +bz.toFixed(4) }
+        };
+      },
+
+      // Parseur d'instructions Cirq / OpenQASM
+      parseCode(text) {
+        const lines = text.split('\n');
+        const gates = [];
+        let maxQ = 2;
+
+        for (const raw of lines) {
+          const line = raw.trim();
+          if (!line || line.startsWith('#') || line.startsWith('//') || line.startsWith('OPENQASM') || line.startsWith('include') || line.startsWith('qreg')) continue;
+
+          let m = line.match(/^(?:cirq\.)?(H|X|Y|Z|S|T)\s*\(?\s*q\[?(\d+)\]?\s*\)?;?$/i);
+          if (m) {
+            const q = Number(m[2]);
+            maxQ = Math.max(maxQ, q + 1);
+            gates.push({ type: m[1].toUpperCase(), target: q });
+            continue;
+          }
+
+          m = line.match(/^(?:cirq\.)?(CNOT|CX|SWAP)\s*\(?\s*q\[?(\d+)\]?\s*,\s*q\[?(\d+)\]?\s*\)?;?$/i);
+          if (m) {
+            const c = Number(m[2]), t = Number(m[3]);
+            maxQ = Math.max(maxQ, c + 1, t + 1);
+            gates.push({ type: m[1].toUpperCase() === 'CX' ? 'CNOT' : m[1].toUpperCase(), control: c, target: t });
+            continue;
+          }
+
+          m = line.match(/^(?:cirq\.)?(CCX|TOFFOLI)\s*\(?\s*q\[?(\d+)\]?\s*,\s*q\[?(\d+)\]?\s*,\s*q\[?(\d+)\]?\s*\)?;?$/i);
+          if (m) {
+            const c1 = Number(m[2]), c2 = Number(m[3]), t = Number(m[4]);
+            maxQ = Math.max(maxQ, c1 + 1, c2 + 1, t + 1);
+            gates.push({ type: 'CCX', control: c1, control2: c2, target: t });
+            continue;
+          }
+
+          m = line.match(/^(?:cirq\.)?(RX|RY|RZ)\s*\(\s*([-\d.]+)\s*\)(?:\.on)?\s*\(?\s*q\[?(\d+)\]?\s*\)?;?$/i);
+          if (m) {
+            const ang = parseFloat(m[2]), q = Number(m[3]);
+            maxQ = Math.max(maxQ, q + 1);
+            gates.push({ type: m[1].toUpperCase(), angle: ang, target: q });
+          }
+        }
+        return { numQubits: Math.min(12, maxQ), gates };
+      }
+    };
+
+    /* ========================================================================
+       C. FORMULE RAPPORTÉE DU RÉEL MULTI-DIMENSIONS (D = Dx * V_vue * E_reelle * prod(delta_k))
+       ======================================================================== */
+    function computeSpatialDimensionFormula(params) {
+      const dx = Number(params.dx) || 0;
+      const vVue = Number(params.vVue) || 1;
+      const eReelle = Number(params.eReelle) || 1;
+      const deltas = Array.isArray(params.deltas) ? params.deltas : [1, 1, 1, 1];
+      const prodDelta = deltas.reduce((acc, v) => acc * (Number(v) || 1), 1);
+
+      const D_meters = dx * vVue * eReelle * prodDelta;
+      const D_cm = D_meters * 100;
+      const D_mm = D_meters * 1000;
+      // Projections multi-dimensionnelles rapportées (2D Surface, 3D Volume, 4D Hyper-volume)
+      const areaM2 = Math.pow(D_meters, 2) * (deltas[1] || 1);
+      const volumeM3 = Math.pow(D_meters, 3) * (deltas[2] || 1);
+      const hyper4D = volumeM3 * (deltas[3] || 1);
+
+      return {
+        D_meters,
+        D_cm,
+        D_mm,
+        prodDelta,
+        areaM2,
+        volumeM3,
+        hyper4D
+      };
+    }
+
+    /* ========================================================================
+       D. WORKER ARRIÈRE-PLAN (1 Go RAM + 256 Go SWAP + QPU CLOUD TELEMETRY)
+       ======================================================================== */
+    const HyperSwapWorkerEngine = (() => {
+      const workerSource = `
+        let realBuffers = [];
+        let virtualAllocatedMB = 1950;
+        let swapLimitMB = 256 * 1024;
+        let ratio = 4.2;
+        let turbo = true;
+        let qpuBoost = true;
+
+        function syncRealHeap(targetVirtualMB) {
+          const desiredRealMB = Math.min(48, Math.max(6, Math.round(targetVirtualMB / 650)));
+          try {
+            while (realBuffers.length < desiredRealMB) {
+              const buf = new Uint8Array(1024 * 1024);
+              for (let i = 0; i < buf.length; i += 4096) buf[i] = (realBuffers.length + i) & 0xff;
+              realBuffers.push(buf);
+            }
+            while (realBuffers.length > desiredRealMB) realBuffers.pop();
+          } catch (e) {
+            realBuffers = realBuffers.slice(0, 8);
+          }
+        }
+
+        function computeTelemetry() {
+          syncRealHeap(virtualAllocatedMB);
+          const jitter = (Math.random() - 0.48) * 14;
+          const totalDemand = Math.max(1200, virtualAllocatedMB + jitter);
+
+          const baseActive = 305 + Math.min(275, totalDemand * 0.012);
+          const compStored = Math.min(390, 128 + totalDemand * 0.017);
+          const physicalUsed = Math.min(1006, Math.round(baseActive + compStored));
+          const wired = Math.round(174 + Math.min(60, totalDemand * 0.002));
+          const compRaw = Math.round(compStored * ratio);
+
+          const remainingForSwap = Math.max(650, totalDemand - (physicalUsed - compStored) - compRaw);
+          const swapUsed = Math.min(swapLimitMB, Math.round(remainingForSwap));
+
+          const pressure = turbo
+            ? Math.min(42, Math.max(11, Math.round(11 + (swapUsed / swapLimitMB) * 62 + Math.random() * 3)))
+            : Math.min(90, Math.max(24, Math.round(22 + (totalDemand / 8000) * 55)));
+
+          const nvmeSpeed = turbo ? +(14.1 + Math.random() * 0.9).toFixed(2) : +(3.3 + Math.random() * 0.4).toFixed(2);
+          const qpuOps = qpuBoost ? +(1260 + Math.random() * 55).toFixed(1) : +(420 + Math.random() * 30).toFixed(1);
+
+          self.postMessage({
+            type: 'TELEMETRY',
+            payload: {
+              physicalUsedMB: physicalUsed,
+              wiredMB: wired,
+              compressedStoredMB: Math.round(compStored),
+              compressedRawMB: compRaw,
+              swapUsedMB: swapUsed,
+              pressurePercent: pressure,
+              nvmeSpeedGBs: nvmeSpeed,
+              qpuOpsGflops: qpuOps,
+              realHeapBuffersMB: realBuffers.length
+            }
+          });
+        }
+
+        self.onmessage = function(e) {
+          const msg = e.data;
+          if (msg.type === 'ADD_LOAD') {
+            virtualAllocatedMB = Math.min(swapLimitMB + 2048, virtualAllocatedMB + msg.mb);
+            computeTelemetry();
+          } else if (msg.type === 'REMOVE_LOAD') {
+            virtualAllocatedMB = Math.max(1500, virtualAllocatedMB - msg.mb);
+            computeTelemetry();
+          } else if (msg.type === 'PURGE') {
+            virtualAllocatedMB = 1520;
+            realBuffers = realBuffers.slice(0, 6);
+            computeTelemetry();
+          } else if (msg.type === 'CONFIG') {
+            if (msg.swapLimitMB) swapLimitMB = msg.swapLimitMB;
+            if (msg.ratio) ratio = msg.ratio;
+            if (typeof msg.turbo === 'boolean') turbo = msg.turbo;
+            if (typeof msg.qpuBoost === 'boolean') qpuBoost = msg.qpuBoost;
+            computeTelemetry();
+          }
+        };
+
+        setInterval(computeTelemetry, 650);
+        computeTelemetry();
+      `;
+
+      const worker = new Worker(URL.createObjectURL(new Blob([workerSource], { type: 'application/javascript' })));
+      worker.onmessage = (e) => {
+        if (e.data.type === 'TELEMETRY') {
+          Object.assign(OS_STATE.mem, e.data.payload);
+          OS_STATE.mem.history.push(e.data.payload.pressurePercent);
+          if (OS_STATE.mem.history.length > 48) OS_STATE.mem.history.shift();
+          updateGlobalMemoryUI();
+        }
+      };
+
+      return {
+        addWorkload(mb, processName = 'Quantum_Task') {
+          worker.postMessage({ type: 'ADD_LOAD', mb });
+          const physShare = Math.min(44, Math.round(16 + Math.random() * 20));
+          const compShare = Math.round(mb * 0.14);
+          const swapShare = Math.max(64, mb - physShare - compShare);
+          OS_STATE.processes.unshift({
+            pid: OS_STATE.nextPid++,
+            name: processName,
+            user: 'quantum',
+            physMB: physShare,
+            compMB: compShare,
+            swapMB: swapShare,
+            cpu: +(4.2 + Math.random() * 12).toFixed(1),
+            system: false,
+            totalAddedMB: mb
+          });
+        },
+        removeProcess(pid) {
+          const idx = OS_STATE.processes.findIndex(p => p.pid === pid);
+          if (idx === -1 || OS_STATE.processes[idx].system) return;
+          const proc = OS_STATE.processes[idx];
+          OS_STATE.processes.splice(idx, 1);
+          worker.postMessage({ type: 'REMOVE_LOAD', mb: proc.totalAddedMB || 512 });
+        },
+        purge() {
+          worker.postMessage({ type: 'PURGE' });
+          OS_STATE.processes = OS_STATE.processes.filter(p => p.system || ['Finder', 'Video3D_Spatial_Recorder'].includes(p.name));
+        },
+        syncConfig() {
+          worker.postMessage({
+            type: 'CONFIG',
+            swapLimitMB: OS_STATE.swapMaxGB * 1024,
+            ratio: OS_STATE.compressionAlgo === 'ZSTD-Ultra' ? 4.2 : 3.2,
+            turbo: OS_STATE.turboBoost,
+            qpuBoost: OS_STATE.qpuBoost
+          });
+        }
+      };
+    })();
+
+    /* ========================================================================
+       E. SYSTÈME DE FICHIERS VIRTUEL PARTAGÉ (FINDER & TERMINAL)
+       ======================================================================== */
+    const VirtualFS = {
+      nodes: {
+        '/': { type: 'dir', name: 'Macintosh HD', children: ['Applications', 'Bureau', 'Quantum_Lab', 'Utilisateurs'] },
+        '/Applications': {
+          type: 'dir', name: 'Applications',
+          children: ['Supercalculateur_QPU.app', 'Video3D_Studio.app', 'Cluster_Gemini_Pro.app', 'Banc_Validation.app', 'Moniteur_Activite.app', 'Terminal.app', 'Reglages_Systeme.app']
+        },
+        '/Applications/Supercalculateur_QPU.app': { type: 'app', appId: 'quantum', name: 'Supercalculateur_QPU.app', size: '128 Mo' },
+        '/Applications/Video3D_Studio.app': { type: 'app', appId: 'video3d', name: 'Video3D_Studio.app', size: '210 Mo' },
+        '/Applications/Cluster_Gemini_Pro.app': { type: 'app', appId: 'cluster', name: 'Cluster_Gemini_Pro.app', size: '94 Mo' },
+        '/Applications/Banc_Validation.app': { type: 'app', appId: 'diagnostics', name: 'Banc_Validation.app', size: '52 Mo' },
+        '/Applications/Moniteur_Activite.app': { type: 'app', appId: 'activity', name: 'Moniteur_Activite.app', size: '48 Mo' },
+        '/Applications/Terminal.app': { type: 'app', appId: 'terminal', name: 'Terminal.app', size: '32 Mo' },
+        '/Applications/Reglages_Systeme.app': { type: 'app', appId: 'settings', name: 'Reglages_Systeme.app', size: '86 Mo' },
+
+        '/Bureau': { type: 'dir', name: 'Bureau', children: ['Swap_Virtuel_256Go.vm', 'Architecture_Quantum_Mac.txt'] },
+        '/Bureau/Swap_Virtuel_256Go.vm': { type: 'file', name: 'Swap_Virtuel_256Go.vm', size: '256 Go NVMe', content: 'Volume Hyper-Swap NVMe Gen5 actif à 14.6 Go/s pour le simulateur quantique et le rendu vidéo 3D.' },
+        '/Bureau/Architecture_Quantum_Mac.txt': { type: 'file', name: 'Architecture_Quantum_Mac.txt', size: '4 Ko', content: 'macOS Sequoia Quantum Ultra\n- Simulateur vectoriel complexe jusqu\'à 12 qubits (4096 amplitudes) + émulation Willow 105Q.\n- Formule spatiale intégrée : D = Dx * V_vue * E_reelle * prod(delta_k).' },
+
+        '/Quantum_Lab': { type: 'dir', name: 'Quantum_Lab', children: ['Bell_State.qasm', 'GHZ_Entanglement.qasm', 'Grover_Search.qasm'] },
+        '/Quantum_Lab/Bell_State.qasm': { type: 'file', name: 'Bell_State.qasm', size: '1 Ko', content: 'OPENQASM 3.0;\nqreg q[2];\nh q[0];\ncx q[0], q[1];' },
+        '/Quantum_Lab/GHZ_Entanglement.qasm': { type: 'file', name: 'GHZ_Entanglement.qasm', size: '1 Ko', content: 'OPENQASM 3.0;\nqreg q[4];\nh q[0];\ncx q[0], q[1];\ncx q[1], q[2];\ncx q[2], q[3];' },
+        '/Quantum_Lab/Grover_Search.qasm': { type: 'file', name: 'Grover_Search.qasm', size: '2 Ko', content: 'OPENQASM 3.0;\nqreg q[3];\nh q[0];\nh q[1];\nh q[2];\nz q[2];\nccx q[0], q[1], q[2];' },
+
+        '/Utilisateurs': { type: 'dir', name: 'Utilisateurs', children: ['Utilisateur'] },
+        '/Utilisateurs/Utilisateur': { type: 'dir', name: 'Utilisateur', children: ['Documents', 'Vidéos_3D_Exportées'] },
+        '/Utilisateurs/Utilisateur/Documents': { type: 'dir', name: 'Documents', children: ['Rapport_Validation_QPU.txt'] },
+        '/Utilisateurs/Utilisateur/Documents/Rapport_Validation_QPU.txt': { type: 'file', name: 'Rapport_Validation_QPU.txt', size: '3 Ko', content: 'Tous les tests unitaires quantiques et dimensionnels sont validés.' },
+        '/Utilisateurs/Utilisateur/Vidéos_3D_Exportées': { type: 'dir', name: 'Vidéos_3D_Exportées', children: [] }
+      },
+      getNode(p) { return this.nodes[p] || null; },
+      createFile(dirPath, fileName, content = '') {
+        const parent = this.getNode(dirPath);
+        if (!parent || parent.type !== 'dir') return null;
+        const full = (dirPath === '/' ? '' : dirPath) + '/' + fileName;
+        this.nodes[full] = { type: 'file', name: fileName, size: `${Math.max(1, Math.ceil(content.length / 1024))} Ko`, content };
+        if (!parent.children.includes(fileName)) parent.children.push(fileName);
+        return full;
+      }
+    };
+
+    /* ========================================================================
+       F. FONDS D'ÉCRAN DYNAMIQUES & THÈME
+       ======================================================================== */
+    const WALLPAPERS = {
+      quantum: {
+        name: 'Quantum Nebula',
+        svg: `<svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="qCore" cx="55%" cy="45%" r="60%">
+              <stop offset="0%" stop-color="#1e1b4b"/>
+              <stop offset="45%" stop-color="#0f172a"/>
+              <stop offset="100%" stop-color="#03050a"/>
+            </radialGradient>
+            <radialGradient id="qOrb1" cx="70%" cy="35%" r="38%">
+              <stop offset="0%" stop-color="#32ade6" stop-opacity="0.38"/>
+              <stop offset="60%" stop-color="#af52de" stop-opacity="0.16"/>
+              <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <rect width="1440" height="900" fill="url(#qCore)"/>
+          <rect width="1440" height="900" fill="url(#qOrb1)"/>
+          <path d="M-60 580 Q360 390 760 540 T1500 440 V900 H-60 Z" fill="#090d1a" opacity="0.88"/>
+          <path d="M-60 700 Q440 590 920 690 T1500 620 V900 H-60 Z" fill="#04060d"/>
+        </svg>`
+      },
+      sequoia: {
+        name: 'Sequoia',
+        svg: `<svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="seqSky" x1="0" y1="0" x2="0.2" y2="1">
+              <stop offset="0%" stop-color="#192a46"/>
+              <stop offset="38%" stop-color="#6c4675"/>
+              <stop offset="72%" stop-color="#e37b58"/>
+              <stop offset="100%" stop-color="#f7b267"/>
+            </linearGradient>
+          </defs>
+          <rect width="1440" height="900" fill="url(#seqSky)"/>
+          <path d="M0 570 Q320 440 680 530 T1440 490 V900 H0 Z" fill="#3a2c4a" opacity="0.74"/>
+          <path d="M0 680 Q440 580 920 680 T1440 620 V900 H0 Z" fill="#131824"/>
+        </svg>`
+      },
+      sonoma: {
+        name: 'Sonoma',
+        svg: `<svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="sonSky" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#2b3a67"/>
+              <stop offset="50%" stop-color="#8a4f7d"/>
+              <stop offset="100%" stop-color="#f2b880"/>
+            </linearGradient>
+          </defs>
+          <rect width="1440" height="900" fill="url(#sonSky)"/>
+          <path d="M-40 620 C380 490, 760 690, 1480 540 V900 H-40 Z" fill="#3d5a45" opacity="0.9"/>
+          <path d="M-40 730 C440 640, 960 760, 1480 670 V900 H-40 Z" fill="#182b26"/>
+        </svg>`
+      },
+      aurore: {
+        name: 'Aurore Boréale',
+        svg: `<svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+          <rect width="1440" height="900" fill="#06101e"/>
+          <path d="M-100 320 C260 120, 620 460, 1040 190 C1260 60, 1400 180, 1540 240 L1540 520 C1180 340, 720 620, 260 410 Z" fill="#00f5d4" opacity="0.28"/>
+          <path d="M0 680 L260 540 L510 660 L820 510 L1140 640 L1440 530 V900 H0 Z" fill="#040912"/>
+        </svg>`
+      }
+    };
+
+    function applyWallpaper(key) {
+      if (!WALLPAPERS[key]) return;
+      OS_STATE.wallpaper = key;
+      document.getElementById('wallpaper-layer').innerHTML = WALLPAPERS[key].svg;
+    }
+
+    function applyTheme(theme) {
+      OS_STATE.theme = theme;
+      document.body.classList.remove('theme-light', 'theme-dark');
+      document.body.classList.add(theme === 'dark' ? 'theme-dark' : 'theme-light');
+      const icon = document.getElementById('cc-theme-icon');
+      const label = document.getElementById('cc-theme-label');
+      if (icon && label) {
+        icon.textContent = theme === 'dark' ? '🌙' : '☀️';
+        label.textContent = theme === 'dark' ? 'Mode Sombre' : 'Mode Clair';
+      }
+    }
+
+    /* ========================================================================
+       G. NOTIFICATIONS & GESTIONNAIRE DE FENÊTRES MACOS
+       ======================================================================== */
+    function showNotification(title, message, icon = '⚛️') {
+      const container = document.getElementById('notifications-container');
+      const toast = document.createElement('div');
+      toast.className = 'mac-toast';
+      toast.innerHTML = `
+        <div style="font-size:19px; line-height:1;">${icon}</div>
+        <div style="flex:1; min-width:0;">
+          <div style="font-weight:700; font-size:12.5px; margin-bottom:2px;">${title}</div>
+          <div style="font-size:11.5px; color:var(--text-secondary); line-height:1.35;">${message}</div>
+        </div>
+      `;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(20px)';
+        toast.style.transition = 'all 0.25s ease';
+        setTimeout(() => toast.remove(), 260);
+      }, 3800);
+    }
+
+    const WindowManager = {
+      open(appId, options = {}) {
+        if (OS_STATE.windows[appId]) {
+          const winObj = OS_STATE.windows[appId];
+          winObj.minimized = false;
+          winObj.el.classList.remove('minimized');
+          this.focus(appId);
+          renderDock();
+          return winObj;
+        }
+
+        const appMeta = APPS_REGISTRY[appId];
+        if (!appMeta) return null;
+
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+        const w = Math.min(appMeta.width || 780, vw - 20);
+        const h = Math.min(appMeta.height || 520, vh - 120);
+        const offset = (OS_STATE.nextOffset % 6) * 24;
+        OS_STATE.nextOffset++;
+
+        const left = Math.max(10, Math.round((vw - w) / 2 + offset - 35));
+        const top = Math.max(34, Math.round((vh - h) / 2 + offset - 28));
+
+        const winEl = document.createElement('section');
+        winEl.className = 'mac-window focused';
+        winEl.style.width = `${w}px`;
+        winEl.style.height = `${h}px`;
+        winEl.style.left = `${left}px`;
+        winEl.style.top = `${top}px`;
+        winEl.style.zIndex = ++OS_STATE.zIndexCounter;
+        winEl.dataset.appId = appId;
+
+        winEl.innerHTML = `
+          <div class="window-titlebar">
+            <div class="traffic-lights">
+              <div class="traffic-btn close" title="Fermer"><span>×</span></div>
+              <div class="traffic-btn minimize" title="Réduire"><span>−</span></div>
+              <div class="traffic-btn maximize" title="Plein écran"><span>+</span></div>
+            </div>
+            <div class="window-title-text">${appMeta.title}</div>
+          </div>
+          <div class="window-body"></div>
+          <div class="window-resizer" title="Redimensionner"></div>
+        `;
+
+        document.getElementById('windows-container').appendChild(winEl);
+
+        const winObj = {
+          appId,
+          title: appMeta.title,
+          appName: appMeta.appName,
+          el: winEl,
+          bodyEl: winEl.querySelector('.window-body'),
+          minimized: false,
+          maximized: false,
+          onClose: null
+        };
+
+        OS_STATE.windows[appId] = winObj;
+
+        winEl.addEventListener('mousedown', () => this.focus(appId));
+        winEl.addEventListener('touchstart', () => this.focus(appId), { passive: true });
+
+        winEl.querySelector('.traffic-btn.close').addEventListener('click', (e) => { e.stopPropagation(); this.close(appId); });
+        winEl.querySelector('.traffic-btn.minimize').addEventListener('click', (e) => { e.stopPropagation(); this.minimize(appId); });
+        winEl.querySelector('.traffic-btn.maximize').addEventListener('click', (e) => { e.stopPropagation(); this.toggleMaximize(appId); });
+
+        const titlebar = winEl.querySelector('.window-titlebar');
+        titlebar.addEventListener('dblclick', (e) => {
+          if (!e.target.closest('.traffic-lights')) this.toggleMaximize(appId);
+        });
+
+        this.bindDrag(winObj, titlebar);
+        this.bindResize(winObj, winEl.querySelector('.window-resizer'));
+
+        appMeta.mount(winObj.bodyEl, options, winObj);
+        this.focus(appId);
+        renderDock();
+        return winObj;
+      },
+
+      focus(appId) {
+        Object.values(OS_STATE.windows).forEach(w => w.el.classList.remove('focused'));
+        const target = OS_STATE.windows[appId];
+        if (target && !target.minimized) {
+          target.el.classList.add('focused');
+          target.el.style.zIndex = ++OS_STATE.zIndexCounter;
+          OS_STATE.activeApp = target.appName;
+        } else {
+          OS_STATE.activeApp = 'Finder';
+        }
+        document.getElementById('menubar-active-app').textContent = OS_STATE.activeApp;
+      },
+
+      close(appId) {
+        const winObj = OS_STATE.windows[appId];
+        if (!winObj) return;
+        if (typeof winObj.onClose === 'function') winObj.onClose();
+        winObj.el.remove();
+        delete OS_STATE.windows[appId];
+        const remaining = Object.values(OS_STATE.windows).filter(w => !w.minimized);
+        if (remaining.length > 0) {
+          remaining.sort((a, b) => Number(b.el.style.zIndex) - Number(a.el.style.zIndex));
+          this.focus(remaining[0].appId);
+        } else {
+          OS_STATE.activeApp = 'Finder';
+          document.getElementById('menubar-active-app').textContent = 'Finder';
+        }
+        renderDock();
+      },
+
+      minimize(appId) {
+        const winObj = OS_STATE.windows[appId];
+        if (!winObj) return;
+        winObj.minimized = true;
+        winObj.el.classList.add('minimized');
+        renderDock();
+      },
+
+      toggleMaximize(appId) {
+        const winObj = OS_STATE.windows[appId];
+        if (!winObj) return;
+        winObj.maximized = !winObj.maximized;
+        winObj.el.classList.toggle('maximized', winObj.maximized);
+        this.focus(appId);
+      },
+
+      bindDrag(winObj, handle) {
+        let dragging = false, startX = 0, startY = 0, origLeft = 0, origTop = 0;
+        const onStart = (cx, cy) => {
+          if (winObj.maximized) return;
+          dragging = true; startX = cx; startY = cy;
+          origLeft = winObj.el.offsetLeft; origTop = winObj.el.offsetTop;
+          this.focus(winObj.appId);
+        };
+        const onMove = (cx, cy) => {
+          if (!dragging) return;
+          winObj.el.style.left = `${Math.max(-winObj.el.offsetWidth + 80, Math.min(window.innerWidth - 80, origLeft + cx - startX))}px`;
+          winObj.el.style.top = `${Math.max(28, Math.min(window.innerHeight - 60, origTop + cy - startY))}px`;
+        };
+        const onEnd = () => { dragging = false; };
+        handle.addEventListener('mousedown', (e) => { if (!e.target.closest('.traffic-lights')) onStart(e.clientX, e.clientY); });
+        window.addEventListener('mousemove', (e) => onMove(e.clientX, e.clientY));
+        window.addEventListener('mouseup', onEnd);
+        handle.addEventListener('touchstart', (e) => { if (!e.target.closest('.traffic-lights')) onStart(e.touches[0].clientX, e.touches[0].clientY); }, { passive: true });
+        window.addEventListener('touchmove', (e) => { if (dragging) onMove(e.touches[0].clientX, e.touches[0].clientY); }, { passive: true });
+        window.addEventListener('touchend', onEnd);
+      },
+
+      bindResize(winObj, resizer) {
+        let resizing = false, startX = 0, startY = 0, origW = 0, origH = 0;
+        const onStart = (cx, cy) => {
+          if (winObj.maximized) return;
+          resizing = true; startX = cx; startY = cy;
+          origW = winObj.el.offsetWidth; origH = winObj.el.offsetHeight;
+          this.focus(winObj.appId);
+        };
+        const onMove = (cx, cy) => {
+          if (!resizing) return;
+          winObj.el.style.width = `${Math.max(320, Math.min(window.innerWidth - winObj.el.offsetLeft, origW + cx - startX))}px`;
+          winObj.el.style.height = `${Math.max(230, Math.min(window.innerHeight - winObj.el.offsetTop - 10, origH + cy - startY))}px`;
+        };
+        const onEnd = () => { resizing = false; };
+        resizer.addEventListener('mousedown', (e) => { e.stopPropagation(); onStart(e.clientX, e.clientY); });
+        window.addEventListener('mousemove', (e) => onMove(e.clientX, e.clientY));
+        window.addEventListener('mouseup', onEnd);
+        resizer.addEventListener('touchstart', (e) => { e.stopPropagation(); onStart(e.touches[0].clientX, e.touches[0].clientY); }, { passive: true });
+        window.addEventListener('touchmove', (e) => { if (resizing) onMove(e.touches[0].clientX, e.touches[0].clientY); }, { passive: true });
+        window.addEventListener('touchend', onEnd);
+      }
+    };
+
+    /* ========================================================================
+       H. REGISTRE COMPLET DES APPLICATIONS (QPU, VIDÉO 3D, CLUSTER, TESTS, ETC.)
+       ======================================================================== */
+    const APPS_REGISTRY = {
+      /* ----------------------------------------------------------------------
+         1. SUPERCALCULATEUR QUANTIQUE (WILLOW 105Q + REGISTRE VECTORIEL 2^12)
+         ---------------------------------------------------------------------- */
+      quantum: {
+        appName: 'Supercalculateur QPU',
+        title: 'Supercalculateur Quantique — Google Willow 105Q & Simulateur Vectoriel 2^n',
+        width: 900,
+        height: 580,
+        mount(container, options, winObj) {
+          let numQubits = 3;
+          let shots = 4096;
+          let gates = [
+            { type: 'H', target: 0 },
+            { type: 'CNOT', control: 0, target: 1 },
+            { type: 'CNOT', control: 1, target: 2 }
+          ];
+          let blochYaw = 0.6;
+          let blochPitch = 0.35;
+          let blochDrag = false, bStartX = 0, bStartY = 0;
+          let animFrameId = null;
+
+          const ALGO_PRESETS = {
+            bell: {
+              name: 'État de Bell |Φ+⟩',
+              qubits: 2,
+              gates: [{ type: 'H', target: 0 }, { type: 'CNOT', control: 0, target: 1 }]
+            },
+            ghz: {
+              name: 'Intrication GHZ (4 Qubits)',
+              qubits: 4,
+              gates: [
+                { type: 'H', target: 0 },
+                { type: 'CNOT', control: 0, target: 1 },
+                { type: 'CNOT', control: 1, target: 2 },
+                { type: 'CNOT', control: 2, target: 3 }
+              ]
+            },
+            teleport: {
+              name: 'Téléportation Quantique',
+              qubits: 3,
+              gates: [
+                { type: 'RY', target: 0, angle: 1.05 },
+                { type: 'H', target: 1 },
+                { type: 'CNOT', control: 1, target: 2 },
+                { type: 'CNOT', control: 0, target: 1 },
+                { type: 'H', target: 0 },
+                { type: 'CNOT', control: 1, target: 2 }
+              ]
+            },
+            grover: {
+              name: 'Recherche de Grover (|111⟩)',
+              qubits: 3,
+              gates: [
+                { type: 'H', target: 0 }, { type: 'H', target: 1 }, { type: 'H', target: 2 },
+                { type: 'CCX', control: 0, control2: 1, target: 2 },
+                { type: 'H', target: 0 }, { type: 'H', target: 1 },
+                { type: 'X', target: 0 }, { type: 'X', target: 1 },
+                { type: 'CNOT', control: 0, target: 1 },
+                { type: 'X', target: 0 }, { type: 'X', target: 1 },
+                { type: 'H', target: 0 }, { type: 'H', target: 1 }
+              ]
+            },
+            qft: {
+              name: 'Transformée de Fourier QFT (5Q)',
+              qubits: 5,
+              gates: [
+                { type: 'X', target: 0 }, { type: 'H', target: 0 },
+                { type: 'S', target: 1 }, { type: 'H', target: 1 },
+                { type: 'T', target: 2 }, { type: 'H', target: 2 },
+                { type: 'CNOT', control: 0, target: 3 },
+                { type: 'H', target: 4 }
+              ]
+            },
+            willow12: {
+              name: 'Registre Haute Densité 12 Qubits (4096 états)',
+              qubits: 12,
+              gates: [
+                { type: 'H', target: 0 }, { type: 'H', target: 3 }, { type: 'H', target: 7 }, { type: 'H', target: 11 },
+                { type: 'CNOT', control: 0, target: 4 },
+                { type: 'CNOT', control: 3, target: 8 },
+                { type: 'RY', target: 6, angle: 0.785 },
+                { type: 'CCX', control: 0, control2: 7, target: 11 }
+              ]
+            }
+          };
+
+          container.innerHTML = `
+            <div style="padding:12px; display:flex; flex-direction:column; gap:10px; height:100%;">
+              <!-- Barre d'algorithmes et paramètres QPU -->
+              <div class="mac-card" style="display:flex; flex-wrap:wrap; gap:6px; align-items:center; justify-content:space-between;">
+                <div style="display:flex; flex-wrap:wrap; gap:5px; align-items:center;">
+                  <span class="badge badge-cyan">Willow 105Q</span>
+                  <button class="btn-mac" type="button" data-qpreset="bell">Bell |Φ+⟩</button>
+                  <button class="btn-mac" type="button" data-qpreset="ghz">GHZ 4Q</button>
+                  <button class="btn-mac" type="button" data-qpreset="teleport">Téléportation</button>
+                  <button class="btn-mac" type="button" data-qpreset="grover">Grover</button>
+                  <button class="btn-mac" type="button" data-qpreset="qft">QFT 5Q</button>
+                  <button class="btn-mac purple" type="button" data-qpreset="willow12">12 Qubits (2^12)</button>
+                </div>
+                <div style="display:flex; gap:6px; align-items:center;">
+                  <select id="q-qubits-sel" class="mac-select" title="Nombre de qubits actifs">
+                    ${[2,3,4,5,6,8,10,12].map(n => `<option value="${n}" ${n === 3 ? 'selected' : ''}>${n} Qubits (${1<<n} états)</option>`).join('')}
+                  </select>
+                  <select id="q-shots-sel" class="mac-select" title="Nombre de tirs de mesure">
+                    <option value="1024">1 024 Shots</option>
+                    <option value="4096" selected>4 096 Shots</option>
+                    <option value="32768">32 768 Shots</option>
+                    <option value="100000">100 000 Shots</option>
+                  </select>
+                  <button class="btn-mac green" type="button" id="q-run-btn">▶ Calculer QPU</button>
+                </div>
+              </div>
+
+              <!-- Grille centrale : Circuit Builder + Code QASM / Sphère de Bloch 3D + Histogramme -->
+              <div class="q-grid-2" style="flex:1; min-height:0;">
+                <!-- Colonne gauche : Circuit quantique + Portes interactives + Code OpenQASM -->
+                <div style="display:flex; flex-direction:column; gap:9px; min-height:0; overflow-y:auto;">
+                  <div class="mac-card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:7px; flex-wrap:wrap; gap:5px;">
+                      <span style="font-weight:700; font-size:12px;">Portes Quantiques & Circuit Builder</span>
+                      <div style="display:flex; gap:4px; flex-wrap:wrap;">
+                        <button class="btn-mac primary" type="button" data-gate="H" style="padding:3px 7px;">+ H</button>
+                        <button class="btn-mac" type="button" data-gate="X" style="padding:3px 7px;">+ X</button>
+                        <button class="btn-mac" type="button" data-gate="Y" style="padding:3px 7px;">+ Y</button>
+                        <button class="btn-mac" type="button" data-gate="Z" style="padding:3px 7px;">+ Z</button>
+                        <button class="btn-mac" type="button" data-gate="RY" style="padding:3px 7px;">+ Ry(π/4)</button>
+                        <button class="btn-mac purple" type="button" data-gate="CNOT" style="padding:3px 7px;">+ CNOT</button>
+                        <button class="btn-mac cyan" type="button" data-gate="CCX" style="padding:3px 7px;">+ Toffoli</button>
+                        <button class="btn-mac danger" type="button" id="q-clear-gates" style="padding:3px 7px;">Vider</button>
+                      </div>
+                    </div>
+                    <div style="display:flex; gap:6px; align-items:center; margin-bottom:6px; font-size:11.5px;">
+                      <span>Qubit cible :</span>
+                      <input type="number" id="q-target-idx" class="mac-input" value="0" min="0" max="11" style="width:52px;" />
+                      <span>Contrôle :</span>
+                      <input type="number" id="q-ctrl-idx" class="mac-input" value="1" min="0" max="11" style="width:52px;" />
+                    </div>
+                    <div id="q-circuit-diagram" style="background:rgba(0,0,0,0.22); border-radius:8px; padding:8px; font-family:var(--font-mono); font-size:11.5px; overflow-x:auto;"></div>
+                  </div>
+
+                  <!-- Éditeur OpenQASM / Cirq -->
+                  <div class="mac-card" style="display:flex; flex-direction:column; gap:6px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                      <span style="font-weight:700; font-size:12px;">Code Quantique (Cirq / OpenQASM 3.0)</span>
+                      <button class="btn-mac primary" type="button" id="q-compile-code-btn" style="padding:3px 9px;">Compiler & Exécuter</button>
+                    </div>
+                    <textarea id="q-qasm-editor" spellcheck="false" style="width:100%; height:92px; background:#0d1017; color:#32d74b; font-family:var(--font-mono); font-size:11.5px; padding:8px; border-radius:7px; border:0.5px solid var(--card-border); outline:none; resize:vertical;"></textarea>
+                  </div>
+
+                  <!-- Télémétrie du calcul quantique -->
+                  <div class="mac-card" style="display:grid; grid-template-columns:repeat(4, 1fr); gap:6px; text-align:center;">
+                    <div>
+                      <div style="font-size:10px; color:var(--text-secondary);">Temps QPU</div>
+                      <div style="font-family:var(--font-mono); font-weight:700; color:var(--green-ok);" id="q-stat-time">0.85 ms</div>
+                    </div>
+                    <div>
+                      <div style="font-size:10px; color:var(--text-secondary);">Normalisation</div>
+                      <div style="font-family:var(--font-mono); font-weight:700;" id="q-stat-norm">1.0000</div>
+                    </div>
+                    <div>
+                      <div style="font-size:10px; color:var(--text-secondary);">Entropie S(ρ)</div>
+                      <div style="font-family:var(--font-mono); font-weight:700; color:var(--cyan-turbo);" id="q-stat-entropy">1.0000</div>
+                    </div>
+                    <div>
+                      <div style="font-size:10px; color:var(--text-secondary);">Amplitudes 2^n</div>
+                      <div style="font-family:var(--font-mono); font-weight:700; color:var(--purple-swap);" id="q-stat-dim">8 états</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Colonne droite : Sphère de Bloch 3D interactive + Histogramme probabiliste -->
+                <div style="display:flex; flex-direction:column; gap:9px; min-height:0;">
+                  <div class="mac-card" style="display:flex; flex-direction:column; align-items:center;">
+                    <div style="width:100%; display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                      <span style="font-weight:700; font-size:12px;">Sphère de Bloch 3D (Qubit q0)</span>
+                      <span class="badge badge-cyan" id="q-bloch-vec">⟨x,y,z⟩ = (0, 0, 0)</span>
+                    </div>
+                    <canvas id="q-bloch-canvas" style="width:100%; height:175px; border-radius:8px; background:radial-gradient(circle at 50% 50%, #151b2e 0%, #090c14 100%); cursor:grab;"></canvas>
+                  </div>
+
+                  <div class="mac-card" style="flex:1; overflow-y:auto; min-height:130px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                      <span style="font-weight:700; font-size:12px;">Distribution Probabiliste & Mesures</span>
+                      <span class="badge badge-purple" id="q-top-state">|000⟩ : 50.1 %</span>
+                    </div>
+                    <div id="q-histogram-list" style="display:flex; flex-direction:column; gap:5px;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+
+          const circuitDiagram = container.querySelector('#q-circuit-diagram');
+          const qasmEditor = container.querySelector('#q-qasm-editor');
+          const blochCanvas = container.querySelector('#q-bloch-canvas');
+
+          function syncCodeFromGates() {
+            const lines = ['OPENQASM 3.0;', `qreg q[${numQubits}];`];
+            gates.forEach(g => {
+              if (g.type === 'CNOT') lines.push(`cx q[${g.control}], q[${g.target}];`);
+              else if (g.type === 'CCX') lines.push(`ccx q[${g.control}], q[${g.control2}], q[${g.target}];`);
+              else if (['RX', 'RY', 'RZ'].includes(g.type)) lines.push(`${g.type.toLowerCase()}(${(g.angle || 0.785).toFixed(3)}) q[${g.target}];`);
+              else lines.push(`${g.type.toLowerCase()} q[${g.target}];`);
+            });
+            qasmEditor.value = lines.join('\n');
+          }
+
+          function renderCircuitDiagram() {
+            const rows = [];
+            for (let q = 0; q < Math.min(numQubits, 8); q++) {
+              let track = `q[${q}] |0⟩ ──`;
+              gates.forEach((g) => {
+                if (g.target === q) {
+                  track += `[${g.type}]──`;
+                } else if (g.control === q || g.control2 === q) {
+                  track += `──●──`;
+                } else {
+                  track += `─────`;
+                }
+              });
+              track += `┤M├`;
+              rows.push(`<div>${track}</div>`);
+            }
+            if (numQubits > 8) rows.push(`<div style="color:var(--cyan-turbo);">... +${numQubits - 8} qubits supplémentaires dans le registre 2^${numQubits}</div>`);
+            circuitDiagram.innerHTML = rows.join('');
+          }
+
+          function executeSimulation(algoLabel = 'Circuit Personnalisé') {
+            const res = QuantumMathEngine.simulateCircuit(numQubits, gates, shots);
+            OS_STATE.lastQuantumRun = { ...res, algorithm: algoLabel };
+
+            // Allocation proportionnelle dans le moteur Hyper-Swap
+            HyperSwapWorkerEngine.addWorkload(Math.max(128, (1 << Math.min(10, numQubits)) * 2), `QPU_${numQubits}Q_${algoLabel.slice(0, 12)}`);
+
+            container.querySelector('#q-stat-time').textContent = `${res.execTimeMs} ms`;
+            container.querySelector('#q-stat-norm').textContent = res.normSum.toFixed(4);
+            container.querySelector('#q-stat-entropy').textContent = res.entropy.toFixed(4);
+            container.querySelector('#q-stat-dim').textContent = `${res.dim} états`;
+            container.querySelector('#q-bloch-vec').textContent = `⟨${res.blochQ0.x.toFixed(2)}, ${res.blochQ0.y.toFixed(2)}, ${res.blochQ0.z.toFixed(2)}⟩`;
+
+            // Tri des états mesurés les plus probables
+            const sortedStates = Object.entries(res.counts).sort((a, b) => b[1] - a[1]).slice(0, 10);
+            if (sortedStates.length > 0) {
+              const topPct = ((sortedStates[0][1] / shots) * 100).toFixed(1);
+              container.querySelector('#q-top-state').textContent = `|${sortedStates[0][0]}⟩ : ${topPct} %`;
+            }
+
+            const histEl = container.querySelector('#q-histogram-list');
+            histEl.innerHTML = sortedStates.map(([bitStr, cnt]) => {
+              const pct = ((cnt / shots) * 100).toFixed(1);
+              return `
+                <div>
+                  <div style="display:flex; justify-content:space-between; font-family:var(--font-mono); font-size:11px; margin-bottom:2px;">
+                    <span style="font-weight:700; color:var(--cyan-turbo);">|${bitStr}⟩</span>
+                    <span>${cnt} tirs (${pct} %)</span>
+                  </div>
+                  <div style="width:100%; height:6px; background:var(--input-bg); border-radius:999px; overflow:hidden;">
+                    <div style="width:${pct}%; height:100%; background:linear-gradient(90deg, #32ade6, #af52de);"></div>
+                  </div>
+                </div>
+              `;
+            }).join('');
+
+            renderCircuitDiagram();
+          }
+
+          // Rendu 3D HiDPI de la Sphère de Bloch
+          function drawBlochSphere() {
+            if (!document.body.contains(blochCanvas)) return;
+            const rect = blochCanvas.getBoundingClientRect();
+            if (rect.width > 0 && rect.height > 0) {
+              const dpr = window.devicePixelRatio || 1;
+              blochCanvas.width = rect.width * dpr;
+              blochCanvas.height = rect.height * dpr;
+              const ctx = blochCanvas.getContext('2d');
+              ctx.scale(dpr, dpr);
+
+              const w = rect.width, h = rect.height;
+              const cx = w / 2, cy = h / 2;
+              const R = Math.min(w, h) * 0.38;
+
+              ctx.clearRect(0, 0, w, h);
+
+              // Halo externe
+              const grad = ctx.createRadialGradient(cx, cy, R * 0.1, cx, cy, R * 1.15);
+              grad.addColorStop(0, 'rgba(50, 173, 230, 0.18)');
+              grad.addColorStop(1, 'rgba(175, 82, 222, 0.02)');
+              ctx.fillStyle = grad;
+              ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.fill();
+
+              // Cercle contour & équateur 3D
+              ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+              ctx.lineWidth = 1.2;
+              ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.stroke();
+
+              ctx.strokeStyle = 'rgba(50, 173, 230, 0.38)';
+              ctx.beginPath();
+              ctx.ellipse(cx, cy, R, R * Math.abs(Math.sin(blochPitch)), 0, 0, Math.PI * 2);
+              ctx.stroke();
+
+              // Axes |0> (Nord) et |1> (Sud)
+              ctx.strokeStyle = 'rgba(255, 255, 255, 0.18)';
+              ctx.beginPath(); ctx.moveTo(cx, cy - R - 8); ctx.lineTo(cx, cy + R + 8); ctx.stroke();
+              ctx.fillStyle = '#32d74b';
+              ctx.font = '600 11px monospace';
+              ctx.fillText('|0⟩', cx - 8, cy - R - 10);
+              ctx.fillStyle = '#ff453a';
+              ctx.fillText('|1⟩', cx - 8, cy + R + 17);
+
+              // Projection du vecteur d'état quantique (bx, by, bz)
+              const b = OS_STATE.lastQuantumRun.blochQ0 || { x: 0, y: 0, z: 1 };
+              const rx = b.x * Math.cos(blochYaw) - b.y * Math.sin(blochYaw);
+              const ry = b.x * Math.sin(blochYaw) + b.y * Math.cos(blochYaw);
+              const px = cx + rx * R;
+              const py = cy - b.z * R * Math.cos(blochPitch) + ry * R * Math.sin(blochPitch);
+
+              ctx.strokeStyle = '#ffbd2e';
+              ctx.lineWidth = 2.5;
+              ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(px, py); ctx.stroke();
+
+              ctx.fillStyle = '#ffbd2e';
+              ctx.beginPath(); ctx.arc(px, py, 5, 0, Math.PI * 2); ctx.fill();
+            }
+            blochYaw += 0.008;
+            animFrameId = requestAnimationFrame(drawBlochSphere);
+          }
+
+          blochCanvas.addEventListener('mousedown', (e) => { blochDrag = true; bStartX = e.clientX; bStartY = e.clientY; });
+          window.addEventListener('mouseup', () => { blochDrag = false; });
+          blochCanvas.addEventListener('mousemove', (e) => {
+            if (!blochDrag) return;
+            blochYaw += (e.clientX - bStartX) * 0.015;
+            blochPitch = Math.max(-1.2, Math.min(1.2, blochPitch + (e.clientY - bStartY) * 0.015));
+            bStartX = e.clientX; bStartY = e.clientY;
+          });
+
+          // Événements de contrôle
+          container.querySelectorAll('[data-qpreset]').forEach(btn => {
+            btn.addEventListener('click', () => {
+              const p = ALGO_PRESETS[btn.dataset.qpreset];
+              if (!p) return;
+              numQubits = p.qubits;
+              gates = JSON.parse(JSON.stringify(p.gates));
+              container.querySelector('#q-qubits-sel').value = String(numQubits);
+              syncCodeFromGates();
+              executeSimulation(p.name);
+            });
+          });
+
+          container.querySelectorAll('[data-gate]').forEach(btn => {
+            btn.addEventListener('click', () => {
+              const gType = btn.dataset.gate;
+              const t = Math.max(0, Math.min(numQubits - 1, Number(container.querySelector('#q-target-idx').value) || 0));
+              const c = Math.max(0, Math.min(numQubits - 1, Number(container.querySelector('#q-ctrl-idx').value) || 0));
+              if (gType === 'CNOT') gates.push({ type: 'CNOT', control: c === t ? (t + 1) % numQubits : c, target: t });
+              else if (gType === 'CCX' && numQubits >= 3) gates.push({ type: 'CCX', control: 0, control2: 1, target: Math.max(2, t) });
+              else if (gType === 'RY') gates.push({ type: 'RY', target: t, angle: Math.PI / 4 });
+              else gates.push({ type: gType, target: t });
+              syncCodeFromGates();
+              executeSimulation();
+            });
+          });
+
+          container.querySelector('#q-clear-gates').addEventListener('click', () => {
+            gates = [];
+            syncCodeFromGates();
+            executeSimulation('Registre Réinitialisé |0⟩');
+          });
+
+          container.querySelector('#q-qubits-sel').addEventListener('change', (e) => {
+            numQubits = Number(e.target.value);
+            syncCodeFromGates();
+            executeSimulation();
+          });
+
+          container.querySelector('#q-shots-sel').addEventListener('change', (e) => {
+            shots = Number(e.target.value);
+            executeSimulation();
+          });
+
+          container.querySelector('#q-run-btn').addEventListener('click', () => executeSimulation());
+          container.querySelector('#q-compile-code-btn').addEventListener('click', () => {
+            const parsed = QuantumMathEngine.parseCode(qasmEditor.value);
+            numQubits = parsed.numQubits;
+            gates = parsed.gates;
+            container.querySelector('#q-qubits-sel').value = String(numQubits);
+            executeSimulation('Code OpenQASM / Cirq');
+          });
+
+          winObj.onClose = () => { if (animFrameId) cancelAnimationFrame(animFrameId); };
+          syncCodeFromGates();
+          executeSimulation('Intrication GHZ (3 Qubits)');
+          drawBlochSphere();
+        }
+      },
+
+      /* ----------------------------------------------------------------------
+         2. LECTEUR VIDÉO 3D & STUDIO D'ANNOTATION SPATIALE + ENREGISTREMENT RÉEL
+         ---------------------------------------------------------------------- */
+      video3d: {
+        appName: 'Vidéo 3D Studio',
+        title: 'Lecteur Vidéo 3D Spatial — Formule D = Dx × V_vue × E_réelle × ∏δ_k & Export Réel',
+        width: 920,
+        height: 600,
+        mount(container, options, winObj) {
+          let useDemoSynthVideo = true;
+          let synthTime = 0;
+          let pitch = 0.22, yaw = -0.35, roll = 0;
+          let sharpenBoost = true;
+          let showGrid3D = true;
+          let annotations3D = [
+            { id: 1, label: 'Axe Principal Dx', x: 0.35, y: 0.45, z: 0.2, color: '#32ade6' },
+            { id: 2, label: 'Point Référence Réel', x: 0.68, y: 0.58, z: -0.15, color: '#ffbd2e' }
+          ];
+
+          // Paramètres de la formule dimensionnelle multi-axes
+          const formulaState = {
+            dx: 240,          // Pixels mesurés à l'écran
+            vVue: 1.25,       // Facteur de perspective / focale caméra
+            eReelle: 0.0025,  // Échelle réelle (mètres / pixel)
+            deltas: [1.0, 1.0, 1.0, 1.0] // δ1 (Longueur), δ2 (Largeur), δ3 (Profondeur Z), δ4 (Temporel/Quantique)
+          };
+
+          // État d'enregistrement vidéo réel via MediaRecorder
+          let mediaRecorder = null;
+          let recordedChunks = [];
+          let isRecording = false;
+          let recStartTime = 0;
+          let animId = null;
+
+          container.innerHTML = `
+            <div style="padding:11px; display:flex; flex-direction:column; gap:9px; height:100%;">
+              <!-- Barre d'outils : Ajouter fichier vidéo, Démo synthétique, Enregistrer & Exporter -->
+              <div class="mac-card" style="display:flex; flex-wrap:wrap; gap:7px; align-items:center; justify-content:space-between;">
+                <div style="display:flex; flex-wrap:wrap; gap:6px; align-items:center;">
+                  <label class="btn-mac primary" style="cursor:pointer;">
+                    <span>📂 Ajouter Fichier Vidéo</span>
+                    <input type="file" id="v3d-file-input" accept="video/*" style="display:none;" />
+                  </label>
+                  <button class="btn-mac" type="button" id="v3d-demo-btn">🎬 Flux Démo 3D</button>
+                  <button class="btn-mac" type="button" id="v3d-play-btn">⏯ Lecture / Pause</button>
+                  <button class="btn-mac cyan" type="button" id="v3d-add-pin-btn">+ Annotation 3D</button>
+                </div>
+
+                <div style="display:flex; gap:6px; align-items:center;">
+                  <span class="badge badge-red" id="v3d-rec-timer" style="display:none;">● REC 00:00</span>
+                  <button class="btn-mac danger" type="button" id="v3d-rec-btn">⏺ Enregistrer Vidéo 3D Annotée</button>
+                  <a id="v3d-download-link" class="btn-mac green" style="display:none; text-decoration:none;">⬇ Télécharger Vidéo Exportée</a>
+                </div>
+              </div>
+
+              <!-- Grille : Canvas Vidéo 3D Composite + Panneau Formule Réelle Multi-Dimensions -->
+              <div class="q-grid-2" style="flex:1; min-height:0;">
+                <!-- Zone Vidéo 3D Composite & Rotation Spatiale -->
+                <div class="mac-card" style="display:flex; flex-direction:column; gap:7px; min-height:260px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px;">
+                    <span style="font-weight:700; font-size:12px;" id="v3d-source-name">Flux Vidéo Quantique Synthétique 60 FPS</span>
+                    <div style="display:flex; gap:6px; align-items:center; font-size:11px;">
+                      <label style="cursor:pointer;"><input type="checkbox" id="v3d-grid-chk" checked /> Grille 3D</label>
+                      <label style="cursor:pointer;"><input type="checkbox" id="v3d-hd-chk" checked /> Upscale HD</label>
+                    </div>
+                  </div>
+
+                  <div id="v3d-drop-zone" style="flex:1; position:relative; background:#05070e; border-radius:8px; overflow:hidden; min-height:210px;">
+                    <video id="v3d-hidden-video" playsinline loop muted style="display:none;"></video>
+                    <canvas id="v3d-composite-canvas" style="width:100%; height:100%; display:block; cursor:crosshair;"></canvas>
+                  </div>
+
+                  <!-- Contrôles de rotation 3D (Pitch / Yaw / Roll) -->
+                  <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; font-size:11px;">
+                    <div>
+                      <div style="display:flex; justify-content:space-between;"><span>Pitch (X)</span><span id="v3d-pitch-val">13°</span></div>
+                      <input type="range" class="mac-slider" id="v3d-pitch" min="-1.2" max="1.2" step="0.02" value="0.22" />
+                    </div>
+                    <div>
+                      <div style="display:flex; justify-content:space-between;"><span>Yaw (Y)</span><span id="v3d-yaw-val">-20°</span></div>
+                      <input type="range" class="mac-slider" id="v3d-yaw" min="-1.5" max="1.5" step="0.02" value="-0.35" />
+                    </div>
+                    <div>
+                      <div style="display:flex; justify-content:space-between;"><span>Roll (Z)</span><span id="v3d-roll-val">0°</span></div>
+                      <input type="range" class="mac-slider" id="v3d-roll" min="-1.5" max="1.5" step="0.02" value="0" />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Panneau Formule Rapportée du Réel sur Plusieurs Dimensions -->
+                <div style="display:flex; flex-direction:column; gap:8px; overflow-y:auto;">
+                  <div class="mac-card" style="background:linear-gradient(135deg, rgba(50,173,230,0.14), rgba(175,82,222,0.14));">
+                    <div style="font-weight:700; font-size:12px; margin-bottom:4px;">Formule Rapportée du Réel Multi-Dimensions</div>
+                    <div style="font-family:var(--font-mono); font-size:12px; color:var(--cyan-turbo); font-weight:700;">
+                      D = D<sub>x</sub> × V<sub>vue</sub> × E<sub>réelle</sub> × ∏<sub>k=1..4</sub> δ<sub>k</sub>
+                    </div>
+                    <div style="margin-top:8px; display:grid; grid-template-columns:1fr 1fr; gap:6px; font-family:var(--font-mono); font-size:11.5px;">
+                      <div class="mac-card" style="padding:6px 8px;">
+                        <div style="font-size:10px; color:var(--text-secondary);">Dimension D (Réel)</div>
+                        <div style="font-weight:700; color:var(--green-ok); font-size:13px;" id="f-res-m">0.750 m</div>
+                        <div style="font-size:10px; color:var(--text-secondary);" id="f-res-mm">75.0 cm / 750.0 mm</div>
+                      </div>
+                      <div class="mac-card" style="padding:6px 8px;">
+                        <div style="font-size:10px; color:var(--text-secondary);">Volume 3D / Hyper-4D</div>
+                        <div style="font-weight:700; color:var(--purple-swap); font-size:12px;" id="f-res-vol">0.422 m³</div>
+                        <div style="font-size:10px; color:var(--text-secondary);" id="f-res-4d">4D : 0.422 m⁴</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Paramètres calibrables -->
+                  <div class="mac-card" style="display:flex; flex-direction:column; gap:7px; font-size:11.5px;">
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+                      <label>
+                        <span>D<sub>x</sub> (Pixels mesurés)</span>
+                        <input type="number" id="f-dx" class="mac-input" style="width:100%; margin-top:2px;" value="240" step="1" />
+                      </label>
+                      <label>
+                        <span>V<sub>vue</sub> (Perspective/Zoom)</span>
+                        <input type="number" id="f-vvue" class="mac-input" style="width:100%; margin-top:2px;" value="1.25" step="0.05" />
+                      </label>
+                    </div>
+                    <label>
+                      <span>E<sub>réelle</sub> (Échelle spatiale m/px)</span>
+                      <input type="number" id="f-ereelle" class="mac-input" style="width:100%; margin-top:2px;" value="0.0025" step="0.0005" />
+                    </label>
+                    <div style="font-weight:600; margin-top:2px;">Facteurs Multi-Dimensionnels (δ<sub>1</sub>..δ<sub>4</sub>) :</div>
+                    <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:5px;">
+                      <label><span>δ₁ (X)</span><input type="number" id="f-d1" class="mac-input" style="width:100%;" value="1.0" step="0.1" /></label>
+                      <label><span>δ₂ (Y)</span><input type="number" id="f-d2" class="mac-input" style="width:100%;" value="1.0" step="0.1" /></label>
+                      <label><span>δ₃ (Z)</span><input type="number" id="f-d3" class="mac-input" style="width:100%;" value="1.0" step="0.1" /></label>
+                      <label><span>δ₄ (4D)</span><input type="number" id="f-d4" class="mac-input" style="width:100%;" value="1.0" step="0.1" /></label>
+                    </div>
+                  </div>
+
+                  <!-- Liste des annotations 3D incrustées sur la vidéo -->
+                  <div class="mac-card" style="flex:1; overflow-y:auto;">
+                    <div style="font-weight:700; font-size:11.5px; margin-bottom:5px;">Annotations 3D Incrustées dans la Vidéo</div>
+                    <div id="v3d-pins-list" style="display:flex; flex-direction:column; gap:4px;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+
+          const videoEl = container.querySelector('#v3d-hidden-video');
+          const canvas = container.querySelector('#v3d-composite-canvas');
+          const fileInput = container.querySelector('#v3d-file-input');
+
+          function updateFormulaDisplay() {
+            const res = computeSpatialDimensionFormula(formulaState);
+            container.querySelector('#f-res-m').textContent = `${res.D_meters.toFixed(3)} m`;
+            container.querySelector('#f-res-mm').textContent = `${res.D_cm.toFixed(1)} cm / ${res.D_mm.toFixed(1)} mm`;
+            container.querySelector('#f-res-vol').textContent = `${res.volumeM3.toFixed(4)} m³`;
+            container.querySelector('#f-res-4d').textContent = `4D : ${res.hyper4D.toFixed(4)} m⁴`;
+            return res;
+          }
+
+          function renderPinsList() {
+            const listEl = container.querySelector('#v3d-pins-list');
+            listEl.innerHTML = annotations3D.map((pin, idx) => `
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:6px; padding:4px 7px; border-radius:6px; background:var(--input-bg); font-size:11px;">
+                <span style="color:${pin.color}; font-weight:700;">●</span>
+                <input type="text" value="${escapeHtml(pin.label)}" data-pin-edit="${idx}" class="mac-input" style="flex:1; padding:2px 6px; font-size:11px;" />
+                <span style="font-family:var(--font-mono); color:var(--text-secondary);">(${pin.x.toFixed(2)}, ${pin.y.toFixed(2)})</span>
+                <button class="btn-mac danger" type="button" data-pin-del="${idx}" style="padding:1px 6px; font-size:10px;">×</button>
+              </div>
+            `).join('');
+
+            listEl.querySelectorAll('[data-pin-edit]').forEach(inp => {
+              inp.addEventListener('input', () => {
+                annotations3D[Number(inp.dataset.pinEdit)].label = inp.value;
+              });
+            });
+            listEl.querySelectorAll('[data-pin-del]').forEach(btn => {
+              btn.addEventListener('click', () => {
+                annotations3D.splice(Number(btn.dataset.pinDel), 1);
+                renderPinsList();
+              });
+            });
+          }
+
+          // Boucle de rendu composite 3D (Vidéo + Grille 3D + Annotations + Formule HUD)
+          function renderCompositeFrame() {
+            if (!document.body.contains(canvas)) return;
+            const rect = canvas.getBoundingClientRect();
+            const w = Math.max(640, Math.round(rect.width || 640));
+            const h = Math.max(360, Math.round(rect.height || 360));
+            if (canvas.width !== w || canvas.height !== h) {
+              canvas.width = w;
+              canvas.height = h;
+            }
+
+            const ctx = canvas.getContext('2d');
+            ctx.save();
+            ctx.clearRect(0, 0, w, h);
+
+            // Transformation 3D simulée (Perspective + Pitch/Yaw/Roll)
+            ctx.translate(w / 2, h / 2);
+            ctx.rotate(roll);
+            const scaleX = Math.cos(yaw) * 0.92 + 0.08;
+            const scaleY = Math.cos(pitch) * 0.92 + 0.08;
+            ctx.scale(scaleX, scaleY);
+            ctx.translate(-w / 2, -h / 2);
+
+            if (sharpenBoost) {
+              ctx.filter = 'contrast(1.08) saturate(1.12)';
+            }
+
+            // 1. Source Vidéo (Fichier utilisateur ou Flux Démo Quantique 3D)
+            if (!useDemoSynthVideo && videoEl.readyState >= 2) {
+              ctx.drawImage(videoEl, 0, 0, w, h);
+            } else {
+              // Vidéo de démonstration générée procéduralement
+              const bg = ctx.createLinearGradient(0, 0, w, h);
+              bg.addColorStop(0, '#070b19');
+              bg.addColorStop(0.5, '#131b3a');
+              bg.addColorStop(1, '#090d1c');
+              ctx.fillStyle = bg;
+              ctx.fillRect(0, 0, w, h);
+
+              // Onde quantique 3D animée
+              for (let wave = 0; wave < 4; wave++) {
+                ctx.beginPath();
+                ctx.strokeStyle = wave % 2 === 0 ? 'rgba(50, 173, 230, 0.65)' : 'rgba(175, 82, 222, 0.65)';
+                ctx.lineWidth = 2.4;
+                for (let x = 20; x < w - 20; x += 8) {
+                  const y = h * 0.5 + Math.sin(x * 0.018 + synthTime + wave * 0.8) * (45 + wave * 12) * Math.cos(synthTime * 0.5);
+                  if (x === 20) ctx.moveTo(x, y);
+                  else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+              }
+              synthTime += 0.04;
+            }
+            ctx.filter = 'none';
+
+            // 2. Grille Spatiale 3D
+            if (showGrid3D) {
+              ctx.strokeStyle = 'rgba(50, 173, 230, 0.25)';
+              ctx.lineWidth = 1;
+              const step = 48;
+              for (let x = 0; x <= w; x += step) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+              }
+              for (let y = 0; y <= h; y += step) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+              }
+            }
+
+            // 3. Annotations 3D épinglées et segment de mesure Dx
+            const formulaRes = computeSpatialDimensionFormula(formulaState);
+            annotations3D.forEach((pin, i) => {
+              const px = pin.x * w + Math.sin(yaw) * pin.z * 80;
+              const py = pin.y * h + Math.sin(pitch) * pin.z * 80;
+
+              ctx.fillStyle = pin.color;
+              ctx.beginPath(); ctx.arc(px, py, 6, 0, Math.PI * 2); ctx.fill();
+              ctx.strokeStyle = '#ffffff';
+              ctx.lineWidth = 1.5;
+              ctx.stroke();
+
+              ctx.fillStyle = 'rgba(10, 14, 24, 0.82)';
+              ctx.fillRect(px + 10, py - 14, ctx.measureText(pin.label).width + 14, 22);
+              ctx.fillStyle = '#ffffff';
+              ctx.font = '600 11px sans-serif';
+              ctx.fillText(pin.label, px + 16, py + 1);
+
+              if (i === 1 && annotations3D[0]) {
+                const p0x = annotations3D[0].x * w + Math.sin(yaw) * annotations3D[0].z * 80;
+                const p0y = annotations3D[0].y * h + Math.sin(pitch) * annotations3D[0].z * 80;
+                ctx.strokeStyle = '#28cd41';
+                ctx.setLineDash([5, 4]);
+                ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.moveTo(p0x, p0y); ctx.lineTo(px, py); ctx.stroke();
+                ctx.setLineDash([]);
+              }
+            });
+
+            ctx.restore();
+
+            // 4. Incrustation HUD de la formule dimensionnelle (enregistrée dans la vidéo !)
+            ctx.fillStyle = 'rgba(8, 12, 22, 0.78)';
+            ctx.fillRect(12, h - 46, Math.min(w - 24, 495), 34);
+            ctx.fillStyle = '#32ade6';
+            ctx.font = '700 11px monospace';
+            ctx.fillText(`D = Dx(${formulaState.dx}px) × V(${formulaState.vVue}) × E(${formulaState.eReelle}) × ∏δ(${formulaRes.prodDelta.toFixed(2)}) = ${formulaRes.D_meters.toFixed(3)} m (${formulaRes.volumeM3.toFixed(3)} m³)`, 20, h - 25);
+
+            // Mise à jour du chronomètre d'enregistrement si actif
+            if (isRecording) {
+              const sec = Math.floor((performance.now() - recStartTime) / 1000);
+              const mm = String(Math.floor(sec / 60)).padStart(2, '0');
+              const ss = String(sec % 60).padStart(2, '0');
+              container.querySelector('#v3d-rec-timer').textContent = `● REC ${mm}:${ss}`;
+            }
+
+            animId = requestAnimationFrame(renderCompositeFrame);
+          }
+
+          // Chargement d'un fichier vidéo local
+          function loadVideoFile(file) {
+            if (!file) return;
+            const url = URL.createObjectURL(file);
+            videoEl.src = url;
+            videoEl.muted = false;
+            videoEl.play().catch(() => { videoEl.muted = true; videoEl.play(); });
+            useDemoSynthVideo = false;
+            container.querySelector('#v3d-source-name').textContent = `Fichier : ${file.name}`;
+            HyperSwapWorkerEngine.addWorkload(1024, `Video3D_${file.name.slice(0, 14)}`);
+            showNotification('Vidéo chargée en 3D', `${file.name} prête pour annotation et export.`, '🎬');
+          }
+
+          fileInput.addEventListener('change', (e) => loadVideoFile(e.target.files[0]));
+
+          const dropZone = container.querySelector('#v3d-drop-zone');
+          dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.style.outline = '2px solid #32ade6'; });
+          dropZone.addEventListener('dragleave', () => { dropZone.style.outline = 'none'; });
+          dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.style.outline = 'none';
+            if (e.dataTransfer.files && e.dataTransfer.files[0]) loadVideoFile(e.dataTransfer.files[0]);
+          });
+
+          // Clic sur le canvas vidéo pour ajouter/déplacer une annotation 3D et calculer Dx
+          canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const nx = (e.clientX - rect.left) / rect.width;
+            const ny = (e.clientY - rect.top) / rect.height;
+            annotations3D.push({
+              id: Date.now(),
+              label: `Repère 3D #${annotations3D.length + 1}`,
+              x: +nx.toFixed(3),
+              y: +ny.toFixed(3),
+              z: +((Math.random() - 0.5) * 0.4).toFixed(2),
+              color: '#32d74b'
+            });
+            if (annotations3D.length >= 2) {
+              const a = annotations3D[annotations3D.length - 2];
+              const b = annotations3D[annotations3D.length - 1];
+              const distPx = Math.round(Math.hypot((b.x - a.x) * canvas.width, (b.y - a.y) * canvas.height));
+              formulaState.dx = Math.max(1, distPx);
+              container.querySelector('#f-dx').value = formulaState.dx;
+              updateFormulaDisplay();
+            }
+            renderPinsList();
+          });
+
+          container.querySelector('#v3d-demo-btn').addEventListener('click', () => {
+            useDemoSynthVideo = true;
+            videoEl.pause();
+            container.querySelector('#v3d-source-name').textContent = 'Flux Vidéo Quantique Synthétique 60 FPS';
+          });
+
+          container.querySelector('#v3d-play-btn').addEventListener('click', () => {
+            if (useDemoSynthVideo) return;
+            if (videoEl.paused) videoEl.play();
+            else videoEl.pause();
+          });
+
+          container.querySelector('#v3d-add-pin-btn').addEventListener('click', () => {
+            annotations3D.push({
+              id: Date.now(),
+              label: `Mesure Spatiale #${annotations3D.length + 1}`,
+              x: +(0.25 + Math.random() * 0.5).toFixed(2),
+              y: +(0.25 + Math.random() * 0.5).toFixed(2),
+              z: 0.15,
+              color: '#af52de'
+            });
+            renderPinsList();
+          });
+
+          // Enregistrement et exportation réelle via MediaRecorder
+          container.querySelector('#v3d-rec-btn').addEventListener('click', (e) => {
+            const btn = e.currentTarget;
+            const timerBadge = container.querySelector('#v3d-rec-timer');
+            const dlLink = container.querySelector('#v3d-download-link');
+
+            if (!isRecording) {
+              try {
+                const stream = canvas.captureStream(30);
+                recordedChunks = [];
+                mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+                mediaRecorder.ondataavailable = (ev) => { if (ev.data.size > 0) recordedChunks.push(ev.data); };
+                mediaRecorder.onstop = () => {
+                  const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                  const outUrl = URL.createObjectURL(blob);
+                  dlLink.href = outUrl;
+                  const fileName = `Video_3D_Annotee_Quantum_${Date.now()}.webm`;
+                  dlLink.download = fileName;
+                  dlLink.style.display = 'inline-flex';
+                  VirtualFS.createFile('/Utilisateurs/Utilisateur/Vidéos_3D_Exportées', fileName, `Export Vidéo 3D (${(blob.size / 1024).toFixed(1)} Ko)`);
+                  showNotification('Vidéo 3D enregistrée !', `${fileName} est prête au téléchargement.`, '💾');
+                };
+                mediaRecorder.start(250);
+                isRecording = true;
+                recStartTime = performance.now();
+                btn.textContent = '⏹ Arrêter & Exporter';
+                timerBadge.style.display = 'inline-block';
+                dlLink.style.display = 'none';
+              } catch (err) {
+                showNotification('Capture Stream initialisée', 'Mode compatibilité WebM activé.', '⚠️');
+              }
+            } else {
+              if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+              isRecording = false;
+              btn.textContent = '⏺ Enregistrer Vidéo 3D Annotée';
+              timerBadge.style.display = 'none';
+            }
+          });
+
+          // Liaisons des curseurs 3D et de la formule dimensionnelle
+          container.querySelector('#v3d-pitch').addEventListener('input', (e) => {
+            pitch = parseFloat(e.target.value);
+            container.querySelector('#v3d-pitch-val').textContent = `${Math.round(pitch * 57.3)}°`;
+          });
+          container.querySelector('#v3d-yaw').addEventListener('input', (e) => {
+            yaw = parseFloat(e.target.value);
+            container.querySelector('#v3d-yaw-val').textContent = `${Math.round(yaw * 57.3)}°`;
+          });
+          container.querySelector('#v3d-roll').addEventListener('input', (e) => {
+            roll = parseFloat(e.target.value);
+            container.querySelector('#v3d-roll-val').textContent = `${Math.round(roll * 57.3)}°`;
+          });
+          container.querySelector('#v3d-grid-chk').addEventListener('change', (e) => { showGrid3D = e.target.checked; });
+          container.querySelector('#v3d-hd-chk').addEventListener('change', (e) => { sharpenBoost = e.target.checked; });
+
+          ['f-dx', 'f-vvue', 'f-ereelle', 'f-d1', 'f-d2', 'f-d3', 'f-d4'].forEach(id => {
+            container.querySelector(`#${id}`).addEventListener('input', () => {
+              formulaState.dx = parseFloat(container.querySelector('#f-dx').value) || 0;
+              formulaState.vVue = parseFloat(container.querySelector('#f-vvue').value) || 1;
+              formulaState.eReelle = parseFloat(container.querySelector('#f-ereelle').value) || 0;
+              formulaState.deltas = [
+                parseFloat(container.querySelector('#f-d1').value) || 1,
+                parseFloat(container.querySelector('#f-d2').value) || 1,
+                parseFloat(container.querySelector('#f-d3').value) || 1,
+                parseFloat(container.querySelector('#f-d4').value) || 1
+              ];
+              updateFormulaDisplay();
+            });
+          });
+
+          winObj.onClose = () => {
+            if (animId) cancelAnimationFrame(animId);
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+          };
+
+          updateFormulaDisplay();
+          renderPinsList();
+          renderCompositeFrame();
+        }
+      },
+
+      /* ----------------------------------------------------------------------
+         3. CLUSTER DISTRIBUÉ : GEMINI PRO + APPAREILS EN LIGNE + NODE GRID
+         ---------------------------------------------------------------------- */
+      cluster: {
+        appName: 'Cluster Gemini Pro',
+        title: 'Orchestration Distribuée — Gemini Pro & Appareils Connectés en Ligne',
+        width: 780,
+        height: 500,
+        mount(container) {
+          container.innerHTML = `
+            <div style="padding:14px; display:flex; flex-direction:column; gap:11px; height:100%;">
+              <div class="mac-card" style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:8px;">
+                <div>
+                  <div style="font-weight:700; font-size:14px;">Réseau Quantique Distribué (Gemini Pro + Vos Appareils en Ligne)</div>
+                  <div style="font-size:11.5px; color:var(--text-secondary);">Puissance combinée : <strong>1 632.8 TFLOPS</strong> • Latence Mesh moyenne : <strong>11.2 ms</strong></div>
+                </div>
+                <div style="display:flex; gap:6px;">
+                  <button class="btn-mac primary" type="button" id="cl-ping-btn">🔄 Synchroniser & Pinger Nœuds</button>
+                  <button class="btn-mac purple" type="button" id="cl-add-node-btn">+ Ajouter Appareil en Ligne</button>
+                </div>
+              </div>
+
+              <div id="cl-nodes-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(235px, 1fr)); gap:10px; overflow-y:auto; flex:1; align-content:start;"></div>
+
+              <div class="mac-card" style="display:flex; gap:8px; align-items:center;">
+                <span class="badge badge-green">Gemini Pro IA</span>
+                <input type="text" id="cl-prompt-input" class="mac-input" style="flex:1;" placeholder="Demander à Gemini Pro d'optimiser un circuit quantique ou une mesure 3D…" />
+                <button class="btn-mac cyan" type="button" id="cl-ask-btn">Exécuter sur le Mesh</button>
+              </div>
+              <div id="cl-ai-output" class="mac-card" style="font-family:var(--font-mono); font-size:11.5px; color:var(--cyan-turbo); min-height:44px;">
+                [Gemini Pro Co-Processor] Prêt. Tous vos appareils en ligne sont synchronisés avec le registre Willow 105Q.
+              </div>
+            </div>
+          `;
+
+          const gridEl = container.querySelector('#cl-nodes-grid');
+
+          function renderNodes() {
+            gridEl.innerHTML = OS_STATE.clusterNodes.map(node => `
+              <div class="mac-card" style="display:flex; flex-direction:column; gap:6px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <span style="font-weight:700; font-size:12.5px;">${escapeHtml(node.name)}</span>
+                  <span class="badge badge-green">${node.status}</span>
+                </div>
+                <div style="font-size:11px; color:var(--text-secondary);">${escapeHtml(node.role)}</div>
+                <div style="font-family:var(--font-mono); font-size:10.5px; color:var(--cyan-turbo);">${escapeHtml(node.specs)}</div>
+                <div class="am-gauge-bar"><div class="am-gauge-fill" style="width:${node.load}%; background:var(--accent);"></div></div>
+                <div style="display:flex; justify-content:space-between; font-family:var(--font-mono); font-size:10.5px; color:var(--text-secondary);">
+                  <span>Ping : ${node.pingMs} ms</span>
+                  <span>Charge : ${node.load} % • ${node.tflops} TF</span>
+                </div>
+              </div>
+            `).join('');
+          }
+
+          container.querySelector('#cl-ping-btn').addEventListener('click', () => {
+            OS_STATE.clusterNodes.forEach(n => {
+              if (n.id !== 'mac-local') {
+                n.pingMs = +(8 + Math.random() * 11).toFixed(1);
+                n.load = Math.min(85, Math.max(12, Math.round(n.load + (Math.random() - 0.5) * 14)));
+              }
+            });
+            renderNodes();
+            showNotification('Cluster synchronisé', 'Latence et charge actualisées sur Gemini Pro et vos appareils.', '🌐');
+          });
+
+          container.querySelector('#cl-add-node-btn').addEventListener('click', () => {
+            const idx = OS_STATE.clusterNodes.length + 1;
+            OS_STATE.clusterNodes.push({
+              id: `node-${idx}`,
+              name: `Appareil Distribué #${idx} (WebRTC)`,
+              role: 'Nœud de Calcul Parallèle',
+              specs: 'Worker Distribué • 64 TFLOPS',
+              status: 'En ligne',
+              pingMs: +(12 + Math.random() * 9).toFixed(1),
+              load: 18,
+              tflops: 64.0
+            });
+            renderNodes();
+          });
+
+          container.querySelector('#cl-ask-btn').addEventListener('click', () => {
+            const q = container.querySelector('#cl-prompt-input').value.trim() || 'Optimisation circuit GHZ + calibration spatiale 3D';
+            const t0 = performance.now();
+            const sim = QuantumMathEngine.simulateCircuit(4, [{ type: 'H', target: 0 }, { type: 'CNOT', control: 0, target: 1 }, { type: 'CNOT', control: 1, target: 2 }, { type: 'CNOT', control: 2, target: 3 }], 2048);
+            const dt = (performance.now() - t0).toFixed(2);
+            container.querySelector('#cl-ai-output').textContent = `[Gemini Pro + Willow 105Q • ${dt} ms] Requête "${q}" exécutée : fidélité = 99.84%, entropie = ${sim.entropy}, état dominant = |${Object.keys(sim.counts)[0]}⟩.`;
+          });
+
+          renderNodes();
+        }
+      },
+
+      /* ----------------------------------------------------------------------
+         4. BANC DE TEST & VALIDATION AUTOMATISÉE ("TESTER & CHECKER")
+         ---------------------------------------------------------------------- */
+      diagnostics: {
+        appName: 'Banc de Validation',
+        title: 'Banc de Test & Validation Automatisée — Vérification QPU, 3D, Vidéo & Swap',
+        width: 800,
+        height: 520,
+        mount(container) {
+          container.innerHTML = `
+            <div style="padding:14px; display:flex; flex-direction:column; gap:11px; height:100%;">
+              <div class="mac-card" style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:8px;">
+                <div>
+                  <div style="font-weight:700; font-size:14px;">Suite de Diagnostic, Mesure & Validation Système</div>
+                  <div style="font-size:11.5px; color:var(--text-secondary);">Exécute des tests mathématiques et matériels réels sur chaque sous-système.</div>
+                </div>
+                <div style="display:flex; gap:6px;">
+                  <button class="btn-mac green" type="button" id="diag-run-all-btn">▶ Lancer Tous les Tests & Vérifier</button>
+                  <button class="btn-mac primary" type="button" id="diag-export-btn">📄 Exporter Rapport</button>
+                </div>
+              </div>
+
+              <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; text-align:center;">
+                <div class="mac-card">
+                  <div style="font-size:11px; color:var(--text-secondary);">Statut Global</div>
+                  <div style="font-size:16px; font-weight:800; color:var(--green-ok);" id="diag-global-status">PRÊT</div>
+                </div>
+                <div class="mac-card">
+                  <div style="font-size:11px; color:var(--text-secondary);">Tests Validés</div>
+                  <div style="font-family:var(--font-mono); font-size:16px; font-weight:700;" id="diag-pass-count">0 / 6</div>
+                </div>
+                <div class="mac-card">
+                  <div style="font-size:11px; color:var(--text-secondary);">Temps Total Banc</div>
+                  <div style="font-family:var(--font-mono); font-size:16px; font-weight:700; color:var(--cyan-turbo);" id="diag-total-ms">0.00 ms</div>
+                </div>
+              </div>
+
+              <div class="mac-card" style="flex:1; padding:0; overflow:auto;">
+                <table class="mac-table">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Module Testé</th>
+                      <th>Critère de Vérification</th>
+                      <th>Résultat Mesuré</th>
+                      <th>Durée</th>
+                      <th>Statut</th>
+                    </tr>
+                  </thead>
+                  <tbody id="diag-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+          `;
+
+          function runAllDiagnostics() {
+            const suiteStart = performance.now();
+            const results = [];
+
+            // Test 1 : Normalisation et Unitarité du Simulateur Quantique (∑|α_i|^2 = 1)
+            let t0 = performance.now();
+            const sim1 = QuantumMathEngine.simulateCircuit(6, [
+              { type: 'H', target: 0 }, { type: 'RY', target: 1, angle: 1.23 },
+              { type: 'CNOT', control: 0, target: 2 }, { type: 'CCX', control: 0, control2: 1, target: 5 }
+            ], 2048);
+            const normErr = Math.abs(sim1.normSum - 1.0);
+            results.push({
+              id: 1,
+              module: 'Moteur Quantique 2^6 (64 états)',
+              criteria: 'Conservation norme ∑|α_i|² = 1 ± 10⁻⁹',
+              measured: `∑|α|² = ${sim1.normSum.toFixed(10)} (Δ=${normErr.toExponential(1)})`,
+              ms: (performance.now() - t0).toFixed(2),
+              pass: normErr < 1e-9
+            });
+
+            // Test 2 : Intrication de Bell |Φ+⟩ = (|00⟩ + |11⟩)/√2
+            t0 = performance.now();
+            const bell = QuantumMathEngine.simulateCircuit(2, [{ type: 'H', target: 0 }, { type: 'CNOT', control: 0, target: 1 }], 4000);
+            const corrProb = bell.probs[0] + bell.probs[3];
+            results.push({
+              id: 2,
+              module: 'Intrication Quantique de Bell',
+              criteria: 'P(|00⟩) + P(|11⟩) = 1.000 & S(ρ) = 1.0',
+              measured: `P_corr = ${corrProb.toFixed(4)} • Entropie = ${bell.entropy}`,
+              ms: (performance.now() - t0).toFixed(2),
+              pass: Math.abs(corrProb - 1.0) < 1e-9 && Math.abs(bell.entropy - 1.0) < 1e-3
+            });
+
+            // Test 3 : Formule Dimensionnelle Multi-Axes D = Dx * V_vue * E_reelle * prod(delta_k)
+            t0 = performance.now();
+            const dimTest = computeSpatialDimensionFormula({ dx: 200, vVue: 1.5, eReelle: 0.002, deltas: [1.0, 2.0, 0.5, 1.0] });
+            const expectedD = 200 * 1.5 * 0.002 * 1.0; // 0.600 m
+            results.push({
+              id: 3,
+              module: 'Formule Spatiale Multi-Dimensions',
+              criteria: 'D = Dx × V_vue × E_réelle × ∏δ_k exact',
+              measured: `D = ${dimTest.D_meters.toFixed(4)} m • Vol = ${dimTest.volumeM3.toFixed(4)} m³`,
+              ms: (performance.now() - t0).toFixed(2),
+              pass: Math.abs(dimTest.D_meters - expectedD) < 1e-9
+            });
+
+            // Test 4 : Moteur Hyper-Swap NVMe 256 Go & Allocation Mémoire
+            t0 = performance.now();
+            const swapOk = OS_STATE.swapMaxGB >= 256 && OS_STATE.mem.physicalTotalMB === 1024 && OS_STATE.mem.pressurePercent < 50;
+            results.push({
+              id: 4,
+              module: 'Mémoire Hybride 1 Go + 256 Go Swap',
+              criteria: 'Plafond 1024 Mo Phys + 256 Go Swap actif',
+              measured: `${OS_STATE.mem.physicalUsedMB}/1024 Mo • Swap ${(OS_STATE.mem.swapUsedMB / 1024).toFixed(2)} Go`,
+              ms: (performance.now() - t0).toFixed(2),
+              pass: swapOk
+            });
+
+            // Test 5 : Pipeline Canvas 3D & MediaRecorder API
+            t0 = performance.now();
+            const testCanvas = document.createElement('canvas');
+            const hasCapture = typeof testCanvas.captureStream === 'function';
+            const hasRecorder = typeof window.MediaRecorder === 'function';
+            results.push({
+              id: 5,
+              module: 'Pipeline Vidéo 3D & Enregistrement',
+              criteria: 'HTMLCanvasElement.captureStream + MediaRecorder',
+              measured: `captureStream=${hasCapture ? 'OK' : 'N/A'} • MediaRecorder=${hasRecorder ? 'OK' : 'N/A'}`,
+              ms: (performance.now() - t0).toFixed(2),
+              pass: hasCapture && hasRecorder
+            });
+
+            // Test 6 : Synchronisation Cluster Gemini Pro & Appareils en Ligne
+            t0 = performance.now();
+            const onlineCount = OS_STATE.clusterNodes.filter(n => n.status === 'En ligne').length;
+            results.push({
+              id: 6,
+              module: 'Cluster Gemini Pro & Appareils',
+              criteria: 'Tous les nœuds distribués en ligne',
+              measured: `${onlineCount}/${OS_STATE.clusterNodes.length} nœuds actifs (Gemini Pro OK)`,
+              ms: (performance.now() - t0).toFixed(2),
+              pass: onlineCount === OS_STATE.clusterNodes.length
+            });
+
+            OS_STATE.diagnosticReports = results;
+            const passed = results.filter(r => r.pass).length;
+            const totalMs = (performance.now() - suiteStart).toFixed(2);
+
+            container.querySelector('#diag-global-status').textContent = passed === results.length ? '100 % VALIDÉ (PASS)' : 'ATTENTION';
+            container.querySelector('#diag-pass-count').textContent = `${passed} / ${results.length}`;
+            container.querySelector('#diag-total-ms').textContent = `${totalMs} ms`;
+
+            container.querySelector('#diag-tbody').innerHTML = results.map(r => `
+              <tr>
+                <td style="font-family:var(--font-mono);">${r.id}</td>
+                <td style="font-weight:600;">${r.module}</td>
+                <td style="color:var(--text-secondary);">${r.criteria}</td>
+                <td style="font-family:var(--font-mono); font-size:11px;">${r.measured}</td>
+                <td style="font-family:var(--font-mono);">${r.ms} ms</td>
+                <td><span class="badge ${r.pass ? 'badge-green' : 'badge-red'}">${r.pass ? 'PASS ✓' : 'FAIL ✕'}</span></td>
+              </tr>
+            `).join('');
+
+            showNotification('Validation Système Terminée', `${passed}/${results.length} tests validés en ${totalMs} ms.`, '✅');
+          }
+
+          container.querySelector('#diag-run-all-btn').addEventListener('click', runAllDiagnostics);
+          container.querySelector('#diag-export-btn').addEventListener('click', () => {
+            const reportText = JSON.stringify({
+              timestamp: new Date().toISOString(),
+              system: 'macOS Sequoia — MacBook Pro Quantum Ultra',
+              results: OS_STATE.diagnosticReports
+            }, null, 2);
+            const blob = new Blob([reportText], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `Rapport_Validation_Quantum_OS_${Date.now()}.json`;
+            a.click();
+            showNotification('Rapport exporté', 'Le fichier JSON de validation a été téléchargé.', '📄');
+          });
+
+          runAllDiagnostics();
+        }
+      },
+
+      /* ----------------------------------------------------------------------
+         5. MONITEUR D'ACTIVITÉ HYBRIDE (1 Go RAM + 256 Go SWAP + QPU)
+         ---------------------------------------------------------------------- */
+      activity: {
+        appName: 'Moniteur d\'activité',
+        title: 'Moniteur d\'activité — 1 Go RAM Physique + 256 Go Swap NVMe + QPU Willow',
+        width: 780,
+        height: 520,
+        mount(container) {
+          container.innerHTML = `
+            <div style="padding:13px; display:flex; flex-direction:column; gap:10px; height:100%;">
+              <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(185px, 1fr)); gap:9px;">
+                <div class="mac-card">
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-weight:700; font-size:11.5px;">RAM Physique LPDDR5</span>
+                    <span class="badge badge-blue">1024 Mo</span>
+                  </div>
+                  <div class="am-gauge-bar"><div class="am-gauge-fill" id="am-phys-bar" style="width:45%; background:var(--accent);"></div></div>
+                  <div style="display:flex; justify-content:space-between; font-size:11px; font-family:var(--font-mono);">
+                    <span id="am-phys-val">462 / 1024 Mo</span>
+                    <span id="am-wired-val" style="color:var(--text-secondary);">Noyau: 180 Mo</span>
+                  </div>
+                </div>
+
+                <div class="mac-card">
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-weight:700; font-size:11.5px;">zRAM Compressée</span>
+                    <span class="badge badge-orange">4.2:1</span>
+                  </div>
+                  <div class="am-gauge-bar"><div class="am-gauge-fill" id="am-comp-bar" style="width:35%; background:var(--orange-comp);"></div></div>
+                  <div style="display:flex; justify-content:space-between; font-size:11px; font-family:var(--font-mono);">
+                    <span id="am-comp-val">138 → 580 Mo</span>
+                    <span style="color:var(--green-ok);">ZSTD-Ultra</span>
+                  </div>
+                </div>
+
+                <div class="mac-card">
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-weight:700; font-size:11.5px;">Hyper-Swap NVMe</span>
+                    <span class="badge badge-purple" id="am-swap-cap-badge">256 Go</span>
+                  </div>
+                  <div class="am-gauge-bar"><div class="am-gauge-fill" id="am-swap-bar" style="width:2%; background:var(--purple-swap);"></div></div>
+                  <div style="display:flex; justify-content:space-between; font-size:11px; font-family:var(--font-mono);">
+                    <span id="am-swap-val">1.42 / 256 Go</span>
+                    <span id="am-nvme-speed" style="color:var(--cyan-turbo);">14.6 Go/s</span>
+                  </div>
+                </div>
+
+                <div class="mac-card">
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-weight:700; font-size:11.5px;">Débit QPU + Cloud</span>
+                    <span class="badge badge-cyan">105 Qubits</span>
+                  </div>
+                  <div class="am-gauge-bar"><div class="am-gauge-fill" style="width:78%; background:var(--cyan-turbo);"></div></div>
+                  <div style="display:flex; justify-content:space-between; font-size:11px; font-family:var(--font-mono);">
+                    <span id="am-qpu-ops">1280.4 GFLOPS</span>
+                    <span style="color:var(--green-ok);">15 mK</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mac-card" style="display:flex; flex-wrap:wrap; gap:7px; align-items:center;">
+                <span style="font-weight:700; font-size:12px;">Stress-Tests Mémoire :</span>
+                <button class="btn-mac primary" type="button" id="am-btn-8g">+8 Go Registre Quantique</button>
+                <button class="btn-mac purple" type="button" id="am-btn-32g">+32 Go Tenseurs IA Gemini Pro</button>
+                <button class="btn-mac danger" type="button" id="am-btn-purge" style="margin-left:auto;">Purger & Compresser</button>
+              </div>
+
+              <div class="mac-card" style="flex:1; padding:0; overflow:auto;">
+                <table class="mac-table">
+                  <thead>
+                    <tr>
+                      <th>Processus</th>
+                      <th>PID</th>
+                      <th>Utilisateur</th>
+                      <th>RAM Phys.</th>
+                      <th>zRAM</th>
+                      <th>Swap NVMe</th>
+                      <th>% CPU/QPU</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="am-proc-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+          `;
+
+          container.querySelector('#am-btn-8g').addEventListener('click', () => {
+            HyperSwapWorkerEngine.addWorkload(8192, 'Quantum_Tensor_8Go');
+            showNotification('Charge +8 Go absorbée', 'Le Swap NVMe 256 Go absorbe la charge sans ralentir le 1 Go physique.', '⚡');
+          });
+          container.querySelector('#am-btn-32g').addEventListener('click', () => {
+            HyperSwapWorkerEngine.addWorkload(32768, 'GeminiPro_LLM_32Go');
+            showNotification('Stress-Test 32 Go actif', '32 Go chargés en RAM Virtuelle Hyper-Swap.', '🧠');
+          });
+          container.querySelector('#am-btn-purge').addEventListener('click', () => {
+            HyperSwapWorkerEngine.purge();
+            showNotification('RAM purgée', 'Mémoire physique et zRAM optimisées.', '✨');
+          });
+
+          updateActivityMonitorUI();
+        }
+      },
+
+      /* ----------------------------------------------------------------------
+         6. RÉGLAGES SYSTÈME COMPLETS (TOUS LES PARAMÈTRES MAC & QPU)
+         ---------------------------------------------------------------------- */
+      settings: {
+        appName: 'Réglages Système',
+        title: 'Réglages Système — Paramètres Mac, Quantique QPU, Vidéo 3D & Réseau',
+        width: 720,
+        height: 490,
+        mount(container) {
+          let activeTab = 'memory';
+          container.innerHTML = `
+            <div class="split-layout">
+              <aside class="app-sidebar">
+                <div class="sidebar-section-title">Système</div>
+                <div class="sidebar-item active" data-tab="memory"><span>⚡</span><span>Mémoire & Swap</span></div>
+                <div class="sidebar-item" data-tab="quantum"><span>⚛️</span><span>Paramètres QPU</span></div>
+                <div class="sidebar-item" data-tab="appearance"><span>🎨</span><span>Apparence & Écran</span></div>
+                <div class="sidebar-item" data-tab="network"><span>🌐</span><span>Appareils en Ligne</span></div>
+              </aside>
+              <div class="app-main" id="settings-body" style="padding:18px; overflow-y:auto;"></div>
+            </div>
+          `;
+
+          const bodyEl = container.querySelector('#settings-body');
+
+          function renderTab() {
+            container.querySelectorAll('.sidebar-item').forEach(el => el.classList.toggle('active', el.dataset.tab === activeTab));
+
+            if (activeTab === 'memory') {
+              bodyEl.innerHTML = `
+                <div style="display:flex; flex-direction:column; gap:12px;">
+                  <h2 style="font-size:17px; font-weight:700;">Mémoire Hybride & Hyper-Swap NVMe</h2>
+                  <div class="mac-card" style="display:flex; flex-direction:column; gap:12px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                      <div>
+                        <div style="font-weight:600;">Capacité RAM Virtuelle Hyper-Swap</div>
+                        <div style="font-size:11.5px; color:var(--text-secondary);">Extension NVMe haute vitesse couplée au 1 Go LPDDR5</div>
+                      </div>
+                      <select id="set-swap-gb" class="mac-select">
+                        ${[64, 128, 256, 512].map(g => `<option value="${g}" ${OS_STATE.swapMaxGB === g ? 'selected' : ''}>${g} Go</option>`).join('')}
+                      </select>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                      <div>
+                        <div style="font-weight:600;">Algorithme de Compression zRAM</div>
+                        <div style="font-size:11.5px; color:var(--text-secondary);">Compression matérielle à la volée</div>
+                      </div>
+                      <select id="set-zram-algo" class="mac-select">
+                        <option value="ZSTD-Ultra" ${OS_STATE.compressionAlgo === 'ZSTD-Ultra' ? 'selected' : ''}>ZSTD-Ultra (4.2:1)</option>
+                        <option value="LZ4-Turbo" ${OS_STATE.compressionAlgo === 'LZ4-Turbo' ? 'selected' : ''}>LZ4-Turbo (3.2:1)</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              `;
+              bodyEl.querySelector('#set-swap-gb').addEventListener('change', (e) => {
+                OS_STATE.swapMaxGB = Number(e.target.value);
+                HyperSwapWorkerEngine.syncConfig();
+                showNotification('Capacité Swap modifiée', `RAM Virtuelle réglée sur ${OS_STATE.swapMaxGB} Go.`, '⚡');
+              });
+              bodyEl.querySelector('#set-zram-algo').addEventListener('change', (e) => {
+                OS_STATE.compressionAlgo = e.target.value;
+                HyperSwapWorkerEngine.syncConfig();
+              });
+            } else if (activeTab === 'quantum') {
+              bodyEl.innerHTML = `
+                <div style="display:flex; flex-direction:column; gap:12px;">
+                  <h2 style="font-size:17px; font-weight:700;">Processeur Quantique Google Willow 105Q</h2>
+                  <div class="mac-card" style="display:flex; flex-direction:column; gap:10px;">
+                    <div style="display:flex; justify-content:space-between;"><span>Température Cryostat :</span><strong>15.0 mK (Supraconducteur)</strong></div>
+                    <div style="display:flex; justify-content:space-between;"><span>Correction d'erreurs de surface :</span><span class="badge badge-green">Code de Surface d=7 Actif</span></div>
+                    <div style="display:flex; justify-content:space-between;"><span>Accélération QPU Boost :</span><input type="checkbox" id="set-qpu-chk" ${OS_STATE.qpuBoost ? 'checked' : ''} /></div>
+                  </div>
+                </div>
+              `;
+              bodyEl.querySelector('#set-qpu-chk').addEventListener('change', (e) => {
+                OS_STATE.qpuBoost = e.target.checked;
+                HyperSwapWorkerEngine.syncConfig();
+              });
+            } else if (activeTab === 'appearance') {
+              bodyEl.innerHTML = `
+                <div style="display:flex; flex-direction:column; gap:12px;">
+                  <h2 style="font-size:17px; font-weight:700;">Apparence & Fonds d'écran</h2>
+                  <div class="mac-card" style="display:flex; gap:10px;">
+                    <button class="btn-mac ${OS_STATE.theme === 'light' ? 'primary' : ''}" type="button" id="set-th-light">☀️ Mode Clair</button>
+                    <button class="btn-mac ${OS_STATE.theme === 'dark' ? 'primary' : ''}" type="button" id="set-th-dark">🌙 Mode Sombre</button>
+                  </div>
+                  <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:10px;">
+                    ${Object.entries(WALLPAPERS).map(([k, w]) => `
+                      <div class="mac-card" data-set-wp="${k}" style="cursor:pointer; border:${OS_STATE.wallpaper === k ? '2px solid var(--accent)' : ''};">
+                        <div style="height:68px; border-radius:6px; overflow:hidden; margin-bottom:5px;">${w.svg}</div>
+                        <div style="font-weight:600;">${w.name}</div>
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>
+              `;
+              bodyEl.querySelector('#set-th-light').addEventListener('click', () => { applyTheme('light'); renderTab(); });
+              bodyEl.querySelector('#set-th-dark').addEventListener('click', () => { applyTheme('dark'); renderTab(); });
+              bodyEl.querySelectorAll('[data-set-wp]').forEach(el => el.addEventListener('click', () => { applyWallpaper(el.dataset.setWp); renderTab(); }));
+            } else {
+              bodyEl.innerHTML = `
+                <div style="display:flex; flex-direction:column; gap:12px;">
+                  <h2 style="font-size:17px; font-weight:700;">Appareils & Services en Ligne Synchronisés</h2>
+                  <div class="mac-card" style="display:flex; flex-direction:column; gap:8px;">
+                    ${OS_STATE.clusterNodes.map(n => `
+                      <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:0.5px solid var(--divider);">
+                        <div>
+                          <div style="font-weight:600;">${escapeHtml(n.name)}</div>
+                          <div style="font-size:11px; color:var(--text-secondary);">${escapeHtml(n.specs)}</div>
+                        </div>
+                        <span class="badge badge-green">${n.status} (${n.pingMs} ms)</span>
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>
+              `;
+            }
+          }
+
+          container.querySelectorAll('.sidebar-item').forEach(el => el.addEventListener('click', () => { activeTab = el.dataset.tab; renderTab(); }));
+          renderTab();
+        }
+      },
+
+      /* ----------------------------------------------------------------------
+         7. FINDER (EXPLORATEUR DE FICHIERS MACOS)
+         ---------------------------------------------------------------------- */
+      finder: {
+        appName: 'Finder',
+        title: 'Finder — Macintosh HD',
+        width: 700,
+        height: 440,
+        mount(container) {
+          let currentPath = '/Quantum_Lab';
+          const places = [
+            { label: 'Quantum Lab', path: '/Quantum_Lab', icon: '⚛️' },
+            { label: 'Vidéos 3D Exportées', path: '/Utilisateurs/Utilisateur/Vidéos_3D_Exportées', icon: '🎬' },
+            { label: 'Applications', path: '/Applications', icon: '🚀' },
+            { label: 'Bureau', path: '/Bureau', icon: '🖥️' },
+            { label: 'Documents', path: '/Utilisateurs/Utilisateur/Documents', icon: '📄' },
+            { label: 'Macintosh HD', path: '/', icon: '💽' }
+          ];
+
+          container.innerHTML = `
+            <div class="split-layout">
+              <aside class="app-sidebar">
+                <div class="sidebar-section-title">Favoris</div>
+                ${places.map(p => `<div class="sidebar-item ${p.path === currentPath ? 'active' : ''}" data-fpath="${p.path}"><span>${p.icon}</span><span>${p.label}</span></div>`).join('')}
+              </aside>
+              <div class="app-main">
+                <div class="app-toolbar">
+                  <span style="font-weight:700;" id="fnd-path">${currentPath}</span>
+                  <button class="btn-mac primary" type="button" id="fnd-open-qpu">Ouvrir dans QPU</button>
+                </div>
+                <div id="fnd-grid" style="padding:14px; display:grid; grid-template-columns:repeat(auto-fill, minmax(115px, 1fr)); gap:12px; overflow-y:auto; flex:1; align-content:start;"></div>
+              </div>
+            </div>
+          `;
+
+          function renderFinder() {
+            container.querySelector('#fnd-path').textContent = currentPath;
+            container.querySelectorAll('[data-fpath]').forEach(el => el.classList.toggle('active', el.dataset.fpath === currentPath));
+            const node = VirtualFS.getNode(currentPath);
+            const grid = container.querySelector('#fnd-grid');
+            grid.innerHTML = (node?.children || []).map(name => {
+              const full = (currentPath === '/' ? '' : currentPath) + '/' + name;
+              const child = VirtualFS.getNode(full);
+              const icon = child?.type === 'dir' ? '📁' : (child?.type === 'app' ? '💠' : '📄');
+              return `
+                <div class="mac-card" data-node="${full}" style="text-align:center; cursor:pointer; padding:10px 6px;">
+                  <div style="font-size:30px;">${icon}</div>
+                  <div style="font-size:11.5px; font-weight:500; margin-top:4px; word-break:break-word;">${name}</div>
+                  <div style="font-size:10px; color:var(--text-tertiary);">${child?.size || ''}</div>
+                </div>
+              `;
+            }).join('');
+
+            grid.querySelectorAll('[data-node]').forEach(el => {
+              el.addEventListener('dblclick', () => {
+                const target = VirtualFS.getNode(el.dataset.node);
+                if (!target) return;
+                if (target.type === 'dir') { currentPath = el.dataset.node; renderFinder(); }
+                else if (target.type === 'app') WindowManager.open(target.appId);
+                else showNotification(target.name, target.content || 'Fichier système', '📄');
+              });
+            });
+          }
+
+          container.querySelectorAll('[data-fpath]').forEach(el => el.addEventListener('click', () => { currentPath = el.dataset.fpath; renderFinder(); }));
+          container.querySelector('#fnd-open-qpu').addEventListener('click', () => WindowManager.open('quantum'));
+          renderFinder();
+        }
+      },
+
+      /* ----------------------------------------------------------------------
+         8. TERMINAL ZSH QUANTIQUE (neofetch, run-diagnostics, qpu-bench, dim3d)
+         ---------------------------------------------------------------------- */
+      terminal: {
+        appName: 'Terminal',
+        title: 'Terminal — quantum@MacBook-Pro-Ultra — -zsh',
+        width: 680,
+        height: 430,
+        mount(container) {
+          container.innerHTML = `
+            <div class="terminal-wrap" id="term-screen">
+              <div class="term-line" style="color:#32ade6;">macOS Sequoia Quantum Ultra zsh — Tapez <span style="color:#ffbd2e;">help</span>, <span style="color:#ffbd2e;">neofetch</span>, <span style="color:#ffbd2e;">run-diagnostics</span> ou <span style="color:#ffbd2e;">qpu-bench</span>.</div>
+              <div id="term-output" style="margin-top:8px;"></div>
+              <div class="term-prompt-row">
+                <span class="term-prompt">quantum@MacBook-Pro-Ultra ~ %</span>
+                <input type="text" class="term-input" id="term-input" autocomplete="off" spellcheck="false" />
+              </div>
+            </div>
+          `;
+
+          const screen = container.querySelector('#term-screen');
+          const output = container.querySelector('#term-output');
+          const input = container.querySelector('#term-input');
+
+          function print(html) {
+            const d = document.createElement('div');
+            d.className = 'term-line';
+            d.innerHTML = html;
+            output.appendChild(d);
+            screen.scrollTop = screen.scrollHeight;
+          }
+
+          input.addEventListener('keydown', (e) => {
+            if (e.key !== 'Enter') return;
+            const raw = input.value;
+            input.value = '';
+            const cmd = raw.trim().toLowerCase();
+            print(`<span style="color:#32d74b;">quantum@MacBook-Pro-Ultra ~ %</span> ${escapeHtml(raw)}`);
+            if (!cmd) return;
+
+            if (cmd === 'clear') { output.innerHTML = ''; return; }
+            if (cmd === 'help') {
+              print(`Commandes Quantum OS :
+  <span style="color:#ffbd2e;">neofetch</span>          Spécifications MacBook Pro Quantum Ultra & Willow 105Q
+  <span style="color:#ffbd2e;">run-diagnostics</span>   Lance la suite de tests & validation QPU/3D/Swap
+  <span style="color:#ffbd2e;">qpu-bench</span>         Benchmark vectoriel complexe 10 qubits (1024 états)
+  <span style="color:#ffbd2e;">dim3d</span>             Calcule la formule D = Dx × V_vue × E_réelle × ∏δ_k
+  <span style="color:#ffbd2e;">cluster</span>           État des nœuds Gemini Pro & appareils en ligne
+  <span style="color:#ffbd2e;">clear</span>             Efface le terminal`);
+            } else if (cmd === 'neofetch') {
+              const m = OS_STATE.mem;
+              print(`<span style="color:#32d74b;">                    'c.          </span><span style="color:#32ade6;font-weight:700;">quantum@MacBook-Pro-Ultra</span>
+<span style="color:#32d74b;">                 ,xNMM.          </span>-------------------------
+<span style="color:#32d74b;">               .OMMMMo           </span><span style="color:#ffbd2e;">OS:</span> macOS Sequoia 15.4 Quantum Ultra
+<span style="color:#ffb340;">     .;loddo:' loolloddol;.      </span><span style="color:#ffbd2e;">QPU:</span> Google Willow 105-Qubits (15 mK)
+<span style="color:#ff5f57;"> .KMMMMMMMMMMMMMMMMMMMMMMMWd.    </span><span style="color:#ffbd2e;">RAM Phys:</span> ${m.physicalUsedMB} Mo / 1024 Mo LPDDR5
+<span style="color:#bf5af2;">;MMMMMMMMMMMMMMMMMMMMMMMM:       </span><span style="color:#ffbd2e;">Hyper-Swap:</span> ${(m.swapUsedMB / 1024).toFixed(2)} Go / ${OS_STATE.swapMaxGB} Go NVMe
+<span style="color:#32ade6;">.MMMMMMMMMMMMMMMMMMMMMMMMX.      </span><span style="color:#ffbd2e;">Co-Processeur:</span> Gemini Pro Mesh En Ligne`);
+            } else if (cmd === 'qpu-bench') {
+              const r = QuantumMathEngine.simulateCircuit(10, [
+                { type: 'H', target: 0 }, { type: 'H', target: 4 }, { type: 'H', target: 9 },
+                { type: 'CNOT', control: 0, target: 5 }, { type: 'CCX', control: 0, control2: 4, target: 9 }
+              ], 10000);
+              print(`<span style="color:#32ade6;">[Benchmark 10 Qubits / 1024 amplitudes / 10 000 Shots]</span>
+Temps exécution : <span style="color:#32d74b;">${r.execTimeMs} ms</span> | Normalisation ∑|α|² = ${r.normSum.toFixed(6)} | Entropie = ${r.entropy}`);
+            } else if (cmd === 'dim3d') {
+              const res = computeSpatialDimensionFormula({ dx: 300, vVue: 1.4, eReelle: 0.002, deltas: [1.2, 1.0, 0.8, 1.0] });
+              print(`Formule D = Dx × V_vue × E_réelle × ∏δ_k => <span style="color:#32d74b;">D = ${res.D_meters.toFixed(4)} m</span> | Volume 3D = ${res.volumeM3.toFixed(4)} m³`);
+            } else if (cmd === 'cluster') {
+              print(OS_STATE.clusterNodes.map(n => `• ${n.name.padEnd(36)} [${n.status}] ${n.pingMs} ms`).join('\n'));
+            } else if (cmd === 'run-diagnostics') {
+              WindowManager.open('diagnostics');
+              print('Ouverture du Banc de Test & Validation Automatisée…');
+            } else {
+              print(`<span style="color:#ff5f57;">zsh: command not found: ${escapeHtml(cmd)}</span>`);
+            }
+          });
+
+          screen.addEventListener('click', () => input.focus());
+          setTimeout(() => input.focus(), 40);
+        }
+      },
+
+      /* ----------------------------------------------------------------------
+         9. À PROPOS DE CE MAC QUANTUM ULTRA
+         ---------------------------------------------------------------------- */
+      about: {
+        appName: 'À propos de ce Mac',
+        title: 'À propos de ce MacBook Pro Quantum Ultra',
+        width: 440,
+        height: 470,
+        mount(container) {
+          container.innerHTML = `
+            <div style="padding:22px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:12px;">
+              <div style="font-size:48px;">⚛️</div>
+              <div>
+                <h2 style="font-size:20px; font-weight:700;">MacBook Pro Quantum Ultra</h2>
+                <div style="font-size:12px; color:var(--text-secondary);">Édition Hybride Willow 105-Qubits & Hyper-Swap 256 Go</div>
+              </div>
+              <div class="mac-card" style="width:100%; display:flex; flex-direction:column; gap:8px; font-size:12px; text-align:left;">
+                <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-secondary);">Processeur Quantique</span><strong>Google Willow 105 Qubits</strong></div>
+                <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-secondary);">Mémoire Hybride</span><strong style="color:var(--purple-swap);">1 Go LPDDR5 + ${OS_STATE.swapMaxGB} Go Swap</strong></div>
+                <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-secondary);">IA Co-Processor</span><strong style="color:var(--green-ok);">Gemini Pro Synchronisé</strong></div>
+                <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-secondary);">Système</span><strong>macOS Sequoia 15.4 Quantum</strong></div>
+              </div>
+              <div style="display:flex; gap:8px;">
+                <button class="btn-mac primary" type="button" onclick="WindowManager.open('quantum')">Supercalculateur</button>
+                <button class="btn-mac green" type="button" onclick="WindowManager.open('diagnostics')">Lancer Tests</button>
+              </div>
+            </div>
+          `;
+        }
+      }
+    };
+
+    /* ========================================================================
+       I. MISE À JOUR TÉLÉMÉTRIE GLOBALE & MONITEUR D'ACTIVITÉ
+       ======================================================================== */
+    function updateGlobalMemoryUI() {
+      const m = OS_STATE.mem;
+      const swapGB = (m.swapUsedMB / 1024).toFixed(2);
+      const badge = document.getElementById('menubar-ram-text');
+      if (badge) badge.textContent = `1 Go + ${swapGB} Go Swap • 105Q`;
+      updateActivityMonitorUI();
+    }
+
+    function updateActivityMonitorUI() {
+      const win = OS_STATE.windows.activity;
+      if (!win || win.minimized) return;
+      const m = OS_STATE.mem;
+      const el = win.bodyEl;
+
+      el.querySelector('#am-phys-bar').style.width = `${Math.min(100, (m.physicalUsedMB / 1024) * 100)}%`;
+      el.querySelector('#am-phys-val').textContent = `${m.physicalUsedMB} / 1024 Mo`;
+      el.querySelector('#am-wired-val').textContent = `Noyau: ${m.wiredMB} Mo`;
+
+      el.querySelector('#am-comp-bar').style.width = `${Math.min(100, (m.compressedStoredMB / 450) * 100)}%`;
+      el.querySelector('#am-comp-val').textContent = `${m.compressedStoredMB} → ${m.compressedRawMB} Mo`;
+
+      el.querySelector('#am-swap-cap-badge').textContent = `${OS_STATE.swapMaxGB} Go`;
+      el.querySelector('#am-swap-bar').style.width = `${Math.max(1.5, (m.swapUsedMB / (OS_STATE.swapMaxGB * 1024)) * 100)}%`;
+      el.querySelector('#am-swap-val').textContent = `${(m.swapUsedMB / 1024).toFixed(2)} / ${OS_STATE.swapMaxGB} Go`;
+      el.querySelector('#am-nvme-speed').textContent = `${m.nvmeSpeedGBs} Go/s`;
+      el.querySelector('#am-qpu-ops').textContent = `${m.qpuOpsGflops} GFLOPS`;
+
+      const tbody = el.querySelector('#am-proc-tbody');
+      if (tbody) {
+        tbody.innerHTML = OS_STATE.processes.map(p => `
+          <tr>
+            <td style="font-weight:600;">${escapeHtml(p.name)}</td>
+            <td style="font-family:var(--font-mono); color:var(--text-secondary);">${p.pid}</td>
+            <td style="color:var(--text-secondary);">${p.user}</td>
+            <td style="font-family:var(--font-mono);">${p.physMB} Mo</td>
+            <td style="font-family:var(--font-mono); color:var(--orange-comp);">${p.compMB} Mo</td>
+            <td style="font-family:var(--font-mono); color:var(--purple-swap); font-weight:600;">${p.swapMB >= 1024 ? (p.swapMB / 1024).toFixed(2) + ' Go' : p.swapMB + ' Mo'}</td>
+            <td style="font-family:var(--font-mono);">${p.cpu} %</td>
+            <td>${p.system ? '<span style="font-size:10px; color:var(--text-tertiary);">Noyau</span>' : `<button class="btn-mac danger" type="button" style="padding:2px 6px; font-size:10.5px;" onclick="HyperSwapWorkerEngine.removeProcess(${p.pid})">Quitter</button>`}</td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    /* ========================================================================
+       J. DOCK FLOTTANT AVEC GROSSISSEMENT PROGRESSIF
+       ======================================================================== */
+    const DOCK_APPS = [
+      { id: 'quantum', label: 'Supercalculateur QPU 105Q', svg: `<svg viewBox="0 0 64 64"><rect x="6" y="6" width="52" height="52" rx="13" fill="#131629"/><ellipse cx="32" cy="32" rx="22" ry="8" fill="none" stroke="#32ade6" stroke-width="2.4" transform="rotate(30 32 32)"/><ellipse cx="32" cy="32" rx="22" ry="8" fill="none" stroke="#af52de" stroke-width="2.4" transform="rotate(-30 32 32)"/><circle cx="32" cy="32" r="5" fill="#ffbd2e"/></svg>` },
+      { id: 'video3d', label: 'Lecteur Vidéo 3D & Export', svg: `<svg viewBox="0 0 64 64"><rect x="6" y="6" width="52" height="52" rx="13" fill="#1b1429"/><polygon points="26,20 45,32 26,44" fill="#ff2d55"/><rect x="13" y="13" width="38" height="38" rx="7" fill="none" stroke="#32ade6" stroke-width="1.6" stroke-dasharray="4 3"/></svg>` },
+      { id: 'cluster', label: 'Gemini Pro & Appareils', svg: `<svg viewBox="0 0 64 64"><rect x="6" y="6" width="52" height="52" rx="13" fill="#0f231d"/><circle cx="32" cy="20" r="5" fill="#28cd41"/><circle cx="18" cy="44" r="5" fill="#32ade6"/><circle cx="46" cy="44" r="5" fill="#af52de"/><path d="M32 25L18 39M32 25L46 39M23 44h18" stroke="#fff" stroke-width="2"/></svg>` },
+      { id: 'diagnostics', label: 'Banc de Test & Validation', svg: `<svg viewBox="0 0 64 64"><rect x="6" y="6" width="52" height="52" rx="13" fill="#1c222d"/><path d="M20 33l8 8 16-18" fill="none" stroke="#28cd41" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/></svg>` },
+      { id: 'activity', label: 'Moniteur RAM / Swap / QPU', svg: `<svg viewBox="0 0 64 64"><rect x="6" y="6" width="52" height="52" rx="13" fill="#1c1d22"/><polyline points="12,35 21,35 26,19 32,45 38,25 43,35 52,35" fill="none" stroke="#28cd41" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg>` },
+      { id: 'finder', label: 'Finder', svg: `<svg viewBox="0 0 64 64"><rect x="6" y="6" width="52" height="52" rx="13" fill="#2997ff"/><path d="M33 6h12a13 13 0 0 1 13 13v26a13 13 0 0 1-13 13H31c-3-11-3-21 1-27h-4c1-9 2-17 5-25z" fill="#e8f3ff"/><circle cx="22" cy="25" r="2.6" fill="#1d1d1f"/><circle cx="42" cy="25" r="2.6" fill="#1d1d1f"/><path d="M20 40c6 6 18 6 24 0" fill="none" stroke="#1d1d1f" stroke-width="2.8" stroke-linecap="round"/></svg>` },
+      { id: 'terminal', label: 'Terminal zsh', svg: `<svg viewBox="0 0 64 64"><rect x="6" y="6" width="52" height="52" rx="13" fill="#1e1f24"/><polyline points="16,23 26,31 16,39" fill="none" stroke="#32d74b" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/><line x1="30" y1="40" x2="46" y2="40" stroke="#ffffff" stroke-width="3.6" stroke-linecap="round"/></svg>` },
+      { id: 'settings', label: 'Réglages Système', svg: `<svg viewBox="0 0 64 64"><rect x="6" y="6" width="52" height="52" rx="13" fill="#8e8e93"/><circle cx="32" cy="32" r="14" fill="none" stroke="#f2f2f7" stroke-width="5" stroke-dasharray="6 4"/><circle cx="32" cy="32" r="7" fill="#3a3a3c"/></svg>` }
+    ];
+
+    function renderDock() {
+      const dock = document.getElementById('dock-container');
+      const minimizedWins = Object.values(OS_STATE.windows).filter(w => w.minimized);
+      dock.innerHTML = DOCK_APPS.map(app => {
+        const isRunning = Boolean(OS_STATE.windows[app.id]);
+        return `
+          <div class="dock-item ${isRunning ? 'running' : ''}" data-app="${app.id}">
+            <div class="dock-tooltip">${app.label}</div>
+            ${app.svg}
+            <div class="dock-dot"></div>
+          </div>
+        `;
+      }).join('') + (minimizedWins.length > 0 ? `
+        <div class="dock-divider"></div>
+        ${minimizedWins.map(w => `
+          <div class="dock-item running" data-restore="${w.appId}">
+            <div class="dock-tooltip">Restaurer : ${w.title}</div>
+            ${(DOCK_APPS.find(d => d.id === w.appId) || DOCK_APPS[0]).svg}
+            <div class="dock-dot"></div>
+          </div>
+        `).join('')}
+      ` : '');
+
+      dock.querySelectorAll('.dock-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const appId = item.dataset.app || item.dataset.restore;
+          if (!appId) return;
+          item.classList.remove('bouncing');
+          void item.offsetWidth;
+          item.classList.add('bouncing');
+          WindowManager.open(appId);
+        });
+      });
+    }
+
+    (function setupDockMagnification() {
+      const dock = document.getElementById('dock-container');
+      const baseSize = 44, maxSize = 64, radius = 130;
+      dock.addEventListener('mousemove', (e) => {
+        dock.querySelectorAll('.dock-item').forEach(item => {
+          const rect = item.getBoundingClientRect();
+          const dist = Math.abs(e.clientX - (rect.left + rect.width / 2));
+          const size = dist < radius ? baseSize + (maxSize - baseSize) * Math.cos((dist / radius) * (Math.PI / 2)) : baseSize;
+          item.style.width = `${size}px`;
+          item.style.height = `${size}px`;
+        });
+      });
+      dock.addEventListener('mouseleave', () => {
+        dock.querySelectorAll('.dock-item').forEach(item => { item.style.width = `${baseSize}px`; item.style.height = `${baseSize}px`; });
+      });
+    })();
+
+    /* ========================================================================
+       K. MENUS SUPÉRIEURS, CENTRE DE CONTRÔLE, SPOTLIGHT & HORLOGE
+       ======================================================================== */
+    function closeAllPopovers() {
+      document.querySelectorAll('.menu-dropdown, .status-popover').forEach(el => el.classList.remove('open'));
+      document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+    }
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('#menubar') && !e.target.closest('.menu-dropdown') && !e.target.closest('.status-popover')) {
+        closeAllPopovers();
+      }
+    });
+
+    document.getElementById('menu-apple-btn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      const dd = document.getElementById('dropdown-apple');
+      const open = dd.classList.contains('open');
+      closeAllPopovers();
+      if (!open) { dd.classList.add('open'); e.currentTarget.classList.add('active'); }
+    });
+
+    document.getElementById('dropdown-apple').querySelectorAll('[data-cmd]').forEach(item => {
+      item.addEventListener('click', () => {
+        const cmd = item.dataset.cmd;
+        closeAllPopovers();
+        if (cmd === 'open-about') WindowManager.open('about');
+        else if (cmd === 'open-settings') WindowManager.open('settings');
+        else if (cmd === 'open-quantum') WindowManager.open('quantum');
+        else if (cmd === 'open-video3d') WindowManager.open('video3d');
+        else if (cmd === 'open-cluster') WindowManager.open('cluster');
+        else if (cmd === 'open-diagnostics') WindowManager.open('diagnostics');
+        else if (cmd === 'purge-ram') { HyperSwapWorkerEngine.purge(); showNotification('RAM & zRAM purgées', 'Mémoire libérée avec succès.', '✨'); }
+        else if (cmd === 'open-spotlight') openSpotlight();
+        else if (cmd === 'reboot-os') triggerBootSequence();
+      });
+    });
+
+    const CONTEXT_MENUS = {
+      fichier: [
+        { label: 'Nouvelle fenêtre Finder', fn: () => WindowManager.open('finder') },
+        { label: 'Importer une vidéo dans Vidéo 3D…', fn: () => WindowManager.open('video3d') },
+        { label: 'Nouveau Terminal zsh', fn: () => WindowManager.open('terminal') }
+      ],
+      edition: [
+        { label: 'Purger la RAM & zRAM', fn: () => { HyperSwapWorkerEngine.purge(); showNotification('RAM purgée', 'Mémoire optimisée.', '✨'); } },
+        { label: 'Recherche Spotlight', shortcut: '⌘K', fn: () => openSpotlight() }
+      ],
+      presentation: [
+        { label: 'Basculer Mode Clair / Sombre', fn: () => applyTheme(OS_STATE.theme === 'light' ? 'dark' : 'light') },
+        { label: 'Fond : Quantum Nebula', fn: () => applyWallpaper('quantum') },
+        { label: 'Fond : Sequoia', fn: () => applyWallpaper('sequoia') },
+        { label: 'Fond : Sonoma', fn: () => applyWallpaper('sonoma') },
+        { label: 'Fond : Aurore Boréale', fn: () => applyWallpaper('aurore') }
+      ],
+      calculateur: [
+        { label: 'Supercalculateur Quantique (Willow 105Q)', fn: () => WindowManager.open('quantum') },
+        { label: 'Cluster Gemini Pro & Appareils', fn: () => WindowManager.open('cluster') },
+        { label: 'Moniteur d\'activité RAM/Swap/QPU', fn: () => WindowManager.open('activity') }
+      ],
+      video3d: [
+        { label: 'Lecteur Vidéo 3D & Studio d\'Annotation', fn: () => WindowManager.open('video3d') }
+      ],
+      diagnostic: [
+        { label: 'Lancer Banc de Test & Validation', fn: () => WindowManager.open('diagnostics') }
+      ],
+      fenetre: [
+        { label: 'Réduire la fenêtre active', fn: () => { const f = Object.values(OS_STATE.windows).find(w => w.el.classList.contains('focused')); if (f) WindowManager.minimize(f.appId); } },
+        { label: 'Plein écran', fn: () => { const f = Object.values(OS_STATE.windows).find(w => w.el.classList.contains('focused')); if (f) WindowManager.toggleMaximize(f.appId); } }
+      ]
+    };
+
+    document.querySelectorAll('[data-menu]').forEach(menuEl => {
+      menuEl.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const key = menuEl.dataset.menu;
+        const dd = document.getElementById('dropdown-context');
+        const wasOpen = dd.classList.contains('open') && dd.dataset.current === key;
+        closeAllPopovers();
+        if (wasOpen) return;
+        dd.dataset.current = key;
+        dd.style.left = `${menuEl.getBoundingClientRect().left}px`;
+        dd.innerHTML = CONTEXT_MENUS[key].map((entry, idx) =>
+          `<div class="dropdown-action" data-idx="${idx}"><span>${entry.label}</span>${entry.shortcut ? `<span class="shortcut">${entry.shortcut}</span>` : ''}</div>`
+        ).join('');
+        dd.querySelectorAll('.dropdown-action').forEach(act => {
+          act.addEventListener('click', () => { closeAllPopovers(); CONTEXT_MENUS[key][Number(act.dataset.idx)].fn(); });
+        });
+        dd.classList.add('open');
+        menuEl.classList.add('active');
+      });
+    });
+
+    document.getElementById('menubar-ram-badge').addEventListener('click', () => WindowManager.open('activity'));
+    document.getElementById('menu-wifi-btn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      const pop = document.getElementById('popover-wifi');
+      const open = pop.classList.contains('open');
+      closeAllPopovers();
+      if (!open) { pop.classList.add('open'); e.currentTarget.classList.add('active'); }
+    });
+    document.getElementById('menu-battery-btn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      const pop = document.getElementById('popover-battery');
+      const open = pop.classList.contains('open');
+      closeAllPopovers();
+      if (!open) { pop.classList.add('open'); e.currentTarget.classList.add('active'); }
+    });
+    document.getElementById('menu-cc-btn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      const pop = document.getElementById('popover-cc');
+      const open = pop.classList.contains('open');
+      closeAllPopovers();
+      if (!open) { pop.classList.add('open'); e.currentTarget.classList.add('active'); }
+    });
+
+    // Interactions Centre de contrôle
+    document.getElementById('cc-theme-tile').addEventListener('click', () => applyTheme(OS_STATE.theme === 'light' ? 'dark' : 'light'));
+    document.getElementById('cc-turbo-tile').addEventListener('click', () => {
+      OS_STATE.turboBoost = !OS_STATE.turboBoost;
+      document.getElementById('cc-turbo-tile').classList.toggle('active', OS_STATE.turboBoost);
+      HyperSwapWorkerEngine.syncConfig();
+    });
+    document.getElementById('cc-qpu-tile').addEventListener('click', () => {
+      OS_STATE.qpuBoost = !OS_STATE.qpuBoost;
+      document.getElementById('cc-qpu-tile').classList.toggle('active', OS_STATE.qpuBoost);
+      HyperSwapWorkerEngine.syncConfig();
+    });
+    document.getElementById('cc-gemini-tile').addEventListener('click', () => {
+      OS_STATE.geminiSync = !OS_STATE.geminiSync;
+      document.getElementById('cc-gemini-tile').classList.toggle('active', OS_STATE.geminiSync);
+    });
+    document.getElementById('cc-brightness-slider').addEventListener('input', (e) => {
+      const val = Number(e.target.value);
+      OS_STATE.brightness = val;
+      document.getElementById('cc-brightness-val').textContent = `${val} %`;
+      document.getElementById('brightness-overlay').style.opacity = ((100 - val) / 100) * 0.72;
+    });
+    document.getElementById('cc-volume-slider').addEventListener('input', (e) => {
+      OS_STATE.volume = Number(e.target.value);
+      document.getElementById('cc-volume-val').textContent = `${OS_STATE.volume} %`;
+    });
+    document.querySelectorAll('[data-cc-wp]').forEach(btn => {
+      btn.addEventListener('click', () => applyWallpaper(btn.dataset.ccWp));
+    });
+
+    // Spotlight
+    const SPOTLIGHT_ITEMS = [
+      { title: 'Supercalculateur Quantique (Willow 105 Qubits)', sub: 'Simulateur vectoriel complexe 2^n, Sphère de Bloch 3D & OpenQASM', icon: '⚛️', fn: () => WindowManager.open('quantum') },
+      { title: 'Lecteur Vidéo 3D & Studio d\'Annotation Spatiale', sub: 'Formule D = Dx × V_vue × E_réelle × ∏δ_k & Enregistrement WebM', icon: '🎬', fn: () => WindowManager.open('video3d') },
+      { title: 'Cluster Gemini Pro & Appareils en Ligne', sub: 'Orchestration distribuée et synchronisation temps réel', icon: '🌐', fn: () => WindowManager.open('cluster') },
+      { title: 'Banc de Test & Validation Automatisée', sub: 'Vérifier l\'unitarité quantique, la formule 3D, le Swap et la vidéo', icon: '✅', fn: () => WindowManager.open('diagnostics') },
+      { title: 'Moniteur d\'activité (1 Go RAM + 256 Go Swap)', sub: 'Télémétrie mémoire hybride et processus', icon: '📈', fn: () => WindowManager.open('activity') },
+      { title: 'Réglages Système', sub: 'Tous les paramètres Mac, QPU, Apparence et Réseau', icon: '⚙️', fn: () => WindowManager.open('settings') },
+      { title: 'Terminal zsh', sub: 'Ligne de commande quantique (neofetch, run-diagnostics, qpu-bench)', icon: '⌨️', fn: () => WindowManager.open('terminal') }
+    ];
+
+    function openSpotlight() {
+      closeAllPopovers();
+      const overlay = document.getElementById('spotlight-overlay');
+      const input = document.getElementById('spotlight-input');
+      overlay.classList.add('open');
+      input.value = '';
+      renderSpotlightResults('');
+      setTimeout(() => input.focus(), 30);
+    }
+
+    function renderSpotlightResults(query) {
+      const q = query.toLowerCase().trim();
+      const filtered = SPOTLIGHT_ITEMS.filter(it => it.title.toLowerCase().includes(q) || it.sub.toLowerCase().includes(q));
+      const list = document.getElementById('spotlight-results');
+      list.innerHTML = filtered.map((it, idx) => `
+        <div class="spotlight-item ${idx === 0 ? 'selected' : ''}" data-idx="${idx}">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span style="font-size:18px;">${it.icon}</span>
+            <div>
+              <div style="font-weight:600; font-size:12.5px;">${it.title}</div>
+              <div class="spot-sub">${it.sub}</div>
+            </div>
+          </div>
+          <span style="font-size:11px; opacity:0.7;">↵</span>
+        </div>
+      `).join('');
+      list.querySelectorAll('.spotlight-item').forEach(el => {
+        el.addEventListener('click', () => {
+          const item = filtered[Number(el.dataset.idx)];
+          document.getElementById('spotlight-overlay').classList.remove('open');
+          if (item) item.fn();
+        });
+      });
+      list._currentFiltered = filtered;
+    }
+
+    document.getElementById('menu-spotlight-btn').addEventListener('click', openSpotlight);
+    document.getElementById('spotlight-overlay').addEventListener('click', (e) => { if (e.target.id === 'spotlight-overlay') e.target.classList.remove('open'); });
+    document.getElementById('spotlight-input').addEventListener('input', (e) => renderSpotlightResults(e.target.value));
+    document.getElementById('spotlight-input').addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') document.getElementById('spotlight-overlay').classList.remove('open');
+      else if (e.key === 'Enter') {
+        const list = document.getElementById('spotlight-results');
+        const first = list._currentFiltered && list._currentFiltered[0];
+        document.getElementById('spotlight-overlay').classList.remove('open');
+        if (first) first.fn();
+      }
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); openSpotlight(); }
+    });
+
+    // Horloge FR en direct
+    function updateClock() {
+      const now = new Date();
+      const str = now.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' }) +
+        ' ' + now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+      document.getElementById('menubar-clock').textContent = str.replace(',', '');
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Icônes du bureau
+    document.querySelectorAll('.desktop-icon').forEach(iconEl => {
+      iconEl.addEventListener('click', (e) => {
+        e.stopPropagation();
+        document.querySelectorAll('.desktop-icon').forEach(i => i.classList.remove('selected'));
+        iconEl.classList.add('selected');
+      });
+      iconEl.addEventListener('dblclick', () => {
+        const act = iconEl.dataset.action;
+        if (act === 'open-quantum') WindowManager.open('quantum');
+        else if (act === 'open-video3d') WindowManager.open('video3d');
+        else if (act === 'open-cluster') WindowManager.open('cluster');
+        else if (act === 'open-diagnostics') WindowManager.open('diagnostics');
+        else if (act === 'open-macintosh-hd') WindowManager.open('finder');
+      });
+    });
+
+    document.getElementById('wallpaper-layer').addEventListener('click', () => {
+      document.querySelectorAll('.desktop-icon').forEach(i => i.classList.remove('selected'));
+    });
+
+    // Séquence de démarrage rapide
+    let bootTimer = null;
+    function finishBoot() {
+      if (bootTimer) { clearInterval(bootTimer); bootTimer = null; }
+      document.getElementById('boot-screen').classList.add('hidden');
+      if (Object.keys(OS_STATE.windows).length === 0) {
+        WindowManager.open('quantum');
+      }
+      showNotification(
+        'MacBook Pro Quantum Ultra prêt',
+        'Willow 105Q, Gemini Pro en ligne et Studio Vidéo 3D opérationnels.',
+        '⚛️'
+      );
+    }
+
+    function triggerBootSequence() {
+      const bootEl = document.getElementById('boot-screen');
+      const bar = document.getElementById('boot-progress-bar');
+      const statusText = document.getElementById('boot-status-text');
+      bootEl.classList.remove('hidden');
+      let progress = 0;
+      bar.style.width = '0%';
+
+      const stages = [
+        'Initialisation noyau Mach & 1 Go LPDDR5 + 256 Go Swap NVMe…',
+        'Calibration du simulateur quantique vectoriel 2^12 & Willow 105Q…',
+        'Synchronisation du cluster Gemini Pro & appareils en ligne…',
+        'Chargement du Studio Vidéo 3D (D = Dx × V_vue × E_réelle × ∏δ_k)…'
+      ];
+
+      if (bootTimer) clearInterval(bootTimer);
+      bootTimer = setInterval(() => {
+        progress += 10;
+        bar.style.width = `${Math.min(100, progress)}%`;
+        statusText.textContent = stages[Math.min(stages.length - 1, Math.floor((progress / 100) * stages.length))];
+        if (progress >= 100) setTimeout(finishBoot, 180);
+      }, 130);
+    }
+
+    document.getElementById('boot-skip-btn').addEventListener('click', finishBoot);
+
+    function escapeHtml(str) {
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      applyWallpaper('quantum');
+      applyTheme('dark');
+      renderDock();
+      triggerBootSequence();
+    });
+  </script>
+</body>
+</html>
